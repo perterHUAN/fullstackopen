@@ -2,8 +2,8 @@ import Part from "./Part";
 function Content({ parts }) {
   return (
     <>
-      {parts.map((part) => (
-        <Part name={part.name} exercises={part.exercises} />
+      {parts.map((part, i) => (
+        <Part key={i} name={part.name} exercises={part.exercises} />
       ))}
     </>
   );
