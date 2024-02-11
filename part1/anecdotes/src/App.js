@@ -23,11 +23,18 @@ const App = () => {
     setPoints(copy);
   }
 
+  const result = points.reduce(
+    (pre, cur, idx) => (cur > pre.value ? { value: cur, idx } : pre),
+    { value: 0, idx: -1 }
+  );
+  const anecdoteWithVote = result.idx === -1 ? "" : anecdotes[result.idx];
   return (
     <>
       <div>{anecdotes[selected]}</div>
       <button onClick={vote}>vote</button>
       <button onClick={generateRandomAnecdote}>next anecdote</button>
+      <h2>Anecdote with most votes</h2>
+      <p>{anecdoteWithVote}</p>
     </>
   );
 };
