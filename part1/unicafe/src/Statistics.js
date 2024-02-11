@@ -1,20 +1,25 @@
+import StatisticLine from "./StatisticLine";
 function Statistics({ good, neutral, bad }) {
   if (!good && !neutral && !bad) {
     return <p>No feedback given</p>;
   }
   const total = good + neutral + bad;
   const average = total === 0 ? 0 : (good * 1 + neutral * 0 + bad * -1) / total;
-  const positive = total === 0 ? 0 : good / total;
+  const positive = total === 0 ? 0 : (good / total) * 100;
 
   return (
     <>
       <h2>statistics</h2>
-      <p arial-label="good count">good {good}</p>
-      <p arial-label="neutral count">neutral {neutral}</p>
-      <p arial-label="bad count">bad {bad}</p>
-      <p arial-label="total">all {total}</p>
-      <p arial-label="average">average {average}</p>
-      <p arial-label="positive percentage">positive {positive * 100}%</p>
+      <StatisticLine label="good" text="good" value={good} />
+      <StatisticLine label="neutral" text="neutral" value={neutral} />
+      <StatisticLine label="bad" text="bad" value={bad} />
+      <StatisticLine label="total" text="total" value={total} />
+      <StatisticLine label="average" text="average" value={average} />
+      <StatisticLine
+        label="positive percentage"
+        text="positive"
+        value={positive}
+      />
     </>
   );
 }
