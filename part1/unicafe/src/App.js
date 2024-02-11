@@ -1,13 +1,11 @@
 import { useState } from "react";
+import Statistics from "./Statistics";
 
 function App() {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
 
-  const total = good + neutral + bad;
-  const average = total === 0 ? 0 : (good * 1 + neutral * 0 + bad * -1) / total;
-  const positive = total === 0 ? 0 : good / total;
   return (
     <div>
       <h2>give feedback</h2>
@@ -25,13 +23,8 @@ function App() {
           bad
         </button>
       </div>
-      <h2>statistics</h2>
-      <p arial-label="good count">good {good}</p>
-      <p arial-label="neutral count">neutral {neutral}</p>
-      <p arial-label="bad count">bad {bad}</p>
-      <p arial-label="total">all {total}</p>
-      <p arial-label="average">average {average}</p>
-      <p arial-label="positive percentage">positive {positive * 100}%</p>
+
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   );
 }
