@@ -10,16 +10,34 @@ function Statistics({ good, neutral, bad }) {
   return (
     <>
       <h2>statistics</h2>
-      <StatisticLine label="good" text="good" value={good} />
-      <StatisticLine label="neutral" text="neutral" value={neutral} />
-      <StatisticLine label="bad" text="bad" value={bad} />
-      <StatisticLine label="total" text="total" value={total} />
-      <StatisticLine label="average" text="average" value={average} />
-      <StatisticLine
-        label="positive percentage"
-        text="positive"
-        value={positive}
-      />
+      <table>
+        <tbody>
+          <tr>
+            <td>good</td>
+            <td>{good}</td>
+          </tr>
+          <tr>
+            <td>neutral</td>
+            <td>{neutral}</td>
+          </tr>
+          <tr>
+            <td>bad</td>
+            <td>{bad}</td>
+          </tr>
+          <tr>
+            <td>total</td>
+            <td>{total}</td>
+          </tr>
+          <tr>
+            <td>average</td>
+            <td>{average}</td>
+          </tr>
+          <tr>
+            <td>positve</td>
+            <td>{positive}%</td>
+          </tr>
+        </tbody>
+      </table>
     </>
   );
 }
