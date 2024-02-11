@@ -1,4 +1,7 @@
 function Statistics({ good, neutral, bad }) {
+  if (!good && !neutral && !bad) {
+    return <p>No feedback given</p>;
+  }
   const total = good + neutral + bad;
   const average = total === 0 ? 0 : (good * 1 + neutral * 0 + bad * -1) / total;
   const positive = total === 0 ? 0 : good / total;
