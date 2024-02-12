@@ -1,4 +1,4 @@
-import Course from "./Course";
+import Courses from "./Courses";
 function App() {
   const courses = [
     {
@@ -42,9 +42,7 @@ function App() {
 
   return (
     <>
-      {courses.map((course) => (
-        <Course course={course} />
-      ))}
+      <Courses courses={courses} />
     </>
   );
 }
