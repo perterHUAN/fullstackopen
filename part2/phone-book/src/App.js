@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
+import Filter from "./Filter";
+import PersonForm from "./PersonForm";
+import Persons from "./Persons";
 
 function App() {
   const [newName, setNewName] = React.useState("");
@@ -35,48 +38,18 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <label id="search">filter shown with</label>
-      <input
-        htmlFor="search"
-        type="text"
-        name="search"
-        value={search}
-        onChange={handleSearchChange}
-      ></input>
+      <Filter search={search} handleSearchChange={handleSearchChange} />
       <h2>add a new</h2>
-      <form onSubmit={handleAdd}>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            type="text"
-            name="name"
-            value={newName}
-            onChange={handleChangeName}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="phone-number">Phone Number</label>
-          <input
-            id="phone-number"
-            name="phone-number"
-            type="text"
-            value={phoneNumber}
-            onChange={handleChangePhoneNumber}
-            required
-          />
-        </div>
-        <div>
-          <button>add</button>
-        </div>
-      </form>
+      <PersonForm
+        handleAdd={handleAdd}
+        newName={newName}
+        handleChangeName={handleChangeName}
+        phoneNumber={phoneNumber}
+        handleChangePhoneNumber={handleChangePhoneNumber}
+      />
+
       <h2>Numbers</h2>
-      {searchPersons.map((person) => (
-        <p key={person.name}>
-          {person.name} {person.phoneNumber}
-        </p>
-      ))}
+      <Persons searchPersons={searchPersons} />
     </div>
   );
 }
