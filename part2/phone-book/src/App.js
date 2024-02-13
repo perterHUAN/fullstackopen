@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
-import { getAll, postNewEntry } from "./phone-book-service";
+import { getAll, postNewEntry, deletEntry } from "./phone-book-service";
 
 function App() {
   const [newName, setNewName] = React.useState("");
@@ -36,6 +36,11 @@ function App() {
     const value = event.target.value;
     setSearch(value);
   }
+  function handleDelete(id) {
+    deletEntry(id)
+      .then((_) => setPersons(persons.filter((person) => person.id !== id)))
+      .catch((error) => console.log("error: ", error));
+  }
   const reg = new RegExp(search, "i");
   const searchPersons = persons.filter((person) => reg.test(person.name));
   return (
@@ -52,7 +57,7 @@ function App() {
       />
 
       <h2>Numbers</h2>
-      <Persons searchPersons={searchPersons} />
+      <Persons searchPersons={searchPersons} handleDelete={handleDelete} />
     </div>
   );
 }

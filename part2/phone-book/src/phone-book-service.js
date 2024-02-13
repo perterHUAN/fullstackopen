@@ -7,5 +7,7 @@ function getAll() {
 function postNewEntry(data) {
   return axios.post(baseUrl, data).then((response) => response.data);
 }
-
-export { getAll, postNewEntry };
+function deletEntry(id) {
+  return axios.delete(`${baseUrl}/${id}`).then((response) => response.data);
+}
+export { getAll, postNewEntry, deletEntry };
