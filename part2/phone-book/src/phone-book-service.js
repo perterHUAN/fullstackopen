@@ -5,9 +5,18 @@ function getAll() {
 }
 
 function postNewEntry(data) {
-  return axios.post(baseUrl, data).then((response) => response.data);
+  return axios.post(baseUrl, data).then((response) => {
+    console.log(response);
+    return response.data;
+  });
 }
 function deletEntry(id) {
   return axios.delete(`${baseUrl}/${id}`).then((response) => response.data);
 }
-export { getAll, postNewEntry, deletEntry };
+function updateEntry(id, data) {
+  return axios.put(`${baseUrl}/${id}`, data).then((response) => {
+    console.log(response.data);
+    return response.data;
+  });
+}
+export { getAll, postNewEntry, deletEntry, updateEntry };

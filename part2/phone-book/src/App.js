@@ -2,7 +2,12 @@ import React, { useCallback, useEffect } from "react";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
-import { getAll, postNewEntry, deletEntry } from "./phone-book-service";
+import {
+  getAll,
+  postNewEntry,
+  deletEntry,
+  updateEntry,
+} from "./phone-book-service";
 
 function App() {
   const [newName, setNewName] = React.useState("");
@@ -20,12 +25,37 @@ function App() {
     const value = event.target.value;
     setPhoneNumber(value);
   }
+  function handleUpdate() {
+    updateEntry(persons.filter((person) => person.name === newName)[0].id, {
+      name: newName,
+      phoneNumber: phoneNumber,
+    });
+  }
   function handleAdd(event) {
     event.preventDefault();
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+    const isExist = persons.some((person) => person.name === newName);
+
+    if (isExist) {
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one`
+        )
+      ) {
+        updateEntry(persons.find((person) => person.name === newName).id, {
+          name: newName,
+          phoneNumber: phoneNumber,
+        }).then((response) => {
+          setPersons(
+            persons
+              .filter((person) => person.name !== response.name)
+              .concat(response)
+          );
+        });
+      }
+
       return;
     }
+
     postNewEntry({ name: newName, phoneNumber: phoneNumber })
       .then((data) => {
         setPersons(persons.concat(data));
