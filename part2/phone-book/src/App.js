@@ -10,9 +10,10 @@ function App() {
   const [search, setSearch] = React.useState("");
   const [persons, setPersons] = React.useState([]);
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => setPersons(response.data));
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log("get response data: ", response.data);
+      setPersons(response.data);
+    });
   }, []);
   function handleChangeName(event) {
     const value = event.target.value;
@@ -28,7 +29,16 @@ function App() {
       alert(`${newName} is already added to phonebook`);
       return;
     }
-    setPersons(persons.concat({ name: newName, phoneNumber: phoneNumber }));
+    axios
+      .post("http://localhost:3001/persons", {
+        name: newName,
+        phoneNumber: phoneNumber,
+      })
+      .then((response) => {
+        console.log("post to server successful!", response.data);
+        // setPersons(response.data);
+      })
+      .catch((error) => console.log("generate error:", error));
   }
   function handleSearchChange(event) {
     const value = event.target.value;
