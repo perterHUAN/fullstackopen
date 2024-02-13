@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
-import axios from "axios";
+import { getAll, postNewEntry } from "./phone-book-service";
 
 function App() {
   const [newName, setNewName] = React.useState("");
@@ -10,10 +10,7 @@ function App() {
   const [search, setSearch] = React.useState("");
   const [persons, setPersons] = React.useState([]);
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("get response data: ", response.data);
-      setPersons(response.data);
-    });
+    getAll().then((data) => setPersons(data));
   }, []);
   function handleChangeName(event) {
     const value = event.target.value;
@@ -29,16 +26,11 @@ function App() {
       alert(`${newName} is already added to phonebook`);
       return;
     }
-    axios
-      .post("http://localhost:3001/persons", {
-        name: newName,
-        phoneNumber: phoneNumber,
+    postNewEntry({ name: newName, phoneNumber: phoneNumber })
+      .then((data) => {
+        setPersons(persons.concat(data));
       })
-      .then((response) => {
-        console.log("post to server successful!", response.data);
-        // setPersons(response.data);
-      })
-      .catch((error) => console.log("generate error:", error));
+      .catch((error) => console.log("generate error: ", error));
   }
   function handleSearchChange(event) {
     const value = event.target.value;
