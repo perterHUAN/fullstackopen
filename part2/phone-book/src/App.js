@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
+import Message from "./Message";
 import {
   getAll,
   postNewEntry,
@@ -14,6 +15,8 @@ function App() {
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [persons, setPersons] = React.useState([]);
+  const [message, setMessage] = React.useState("");
+
   useEffect(() => {
     getAll().then((data) => setPersons(data));
   }, []);
@@ -24,12 +27,6 @@ function App() {
   function handleChangePhoneNumber(event) {
     const value = event.target.value;
     setPhoneNumber(value);
-  }
-  function handleUpdate() {
-    updateEntry(persons.filter((person) => person.name === newName)[0].id, {
-      name: newName,
-      phoneNumber: phoneNumber,
-    });
   }
   function handleAdd(event) {
     event.preventDefault();
@@ -58,6 +55,8 @@ function App() {
 
     postNewEntry({ name: newName, phoneNumber: phoneNumber })
       .then((data) => {
+        setMessage(`Added ${newName}`);
+        setTimeout(() => setMessage(""), 2000);
         setPersons(persons.concat(data));
       })
       .catch((error) => console.log("generate error: ", error));
@@ -76,6 +75,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Message message={message} />
       <Filter search={search} handleSearchChange={handleSearchChange} />
       <h2>add a new</h2>
       <PersonForm
