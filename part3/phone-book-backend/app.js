@@ -27,7 +27,13 @@ const notes = [
 app.get("/api/persons", (request, response) => {
   response.json(notes);
 });
-
+app.get("/info", (request, response) => {
+  const body = `
+    <p>Phonebook has info for ${notes.length} people</p>
+    <p>${new Date()}<p>
+  `;
+  response.send(body);
+});
 const PORT = 3001;
 
 app.listen(PORT, () => console.log("connect!!!"));
