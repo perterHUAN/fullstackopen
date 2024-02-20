@@ -57,6 +57,21 @@ app.get("/api/persons/:id", (request, response) => {
   else response.send(result[0]);
 });
 
+/*
+  Delete /api/persons/id
+  delete the person which id is equal to the id given in url
+*/
+app.delete("/api/persons/:id", (request, response) => {
+  const id = +request.params.id;
+  const isExist = persons.some((person) => person.id === id);
+  if (isExist) {
+    persons = persons.filter((persons) => persons.id !== id);
+    response.status(200).end();
+  } else {
+    response.status(404).end();
+  }
+});
+
 const PORT = 3001;
 
 app.listen(PORT, () => console.log("connect!!!"));
