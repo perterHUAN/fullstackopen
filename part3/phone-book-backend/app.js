@@ -72,6 +72,23 @@ app.delete("/api/persons/:id", (request, response) => {
   }
 });
 
+/*
+  Post /api/persons/
+  create a new record based on the json data in request body. 
+*/
+function generateRandomId() {
+  return Math.floor(Math.random() * 10000);
+}
+
+app.use(express.json());
+app.post("/api/persons", (request, response) => {
+  persons.push({
+    ...request.body,
+    id: generateRandomId(),
+  });
+
+  response.status(201).end();
+});
 const PORT = 3001;
 
 app.listen(PORT, () => console.log("connect!!!"));
