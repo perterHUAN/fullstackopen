@@ -1,5 +1,21 @@
 const express = require("express");
+const morgan = require("morgan");
+
 const app = express();
+
+app.use(express.json());
+/*
+  use the morgan middleware with the customize configure 
+  to log the data sent in POST request
+*/
+morgan.format("reqbody", function (req, res) {
+  return JSON.stringify(req.body);
+});
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :reqbody"
+  )
+);
 
 const persons = [
   {
@@ -29,7 +45,7 @@ const persons = [
   in the format of JSON.
 */
 app.get("/api/persons", (request, response) => {
-  response.json(notes);
+  response.json(persons);
 });
 /*
   Get /info
@@ -38,7 +54,7 @@ app.get("/api/persons", (request, response) => {
 */
 app.get("/info", (request, response) => {
   const body = `
-    <p>Phonebook has info for ${notes.length} people</p>
+    <p>Phonebook has info for ${persons.length} people</p>
     <p>${new Date()}<p>
   `;
   response.send(body);
@@ -85,7 +101,6 @@ function generateRandomId() {
   return Math.floor(Math.random() * 10000);
 }
 
-app.use(express.json());
 app.post("/api/persons", (request, response) => {
   const { name, number } = request.body;
   let status = 201;
