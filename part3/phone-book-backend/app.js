@@ -75,6 +75,11 @@ app.delete("/api/persons/:id", (request, response) => {
 /*
   Post /api/persons/
   create a new record based on the json data in request body. 
+  
+  Error conditions:
+  * Missing the name or number field
+  * Invalid format for the name or number field.
+  * A record with the same name already exists in the phone book.
 */
 function generateRandomId() {
   return Math.floor(Math.random() * 10000);
@@ -82,12 +87,34 @@ function generateRandomId() {
 
 app.use(express.json());
 app.post("/api/persons", (request, response) => {
-  persons.push({
-    ...request.body,
-    id: generateRandomId(),
-  });
-
-  response.status(201).end();
+  const { name, number } = request.body;
+  let status = 201;
+  let errorInfo = "";
+  if (!name || !number) {
+    status = 400;
+    errorInfo = "MUST include the name and number field";
+  } else if (typeof name !== "string") {
+    status = 400;
+    errorInfo = "name field MUST be a string";
+  } else if (typeof number !== "string") {
+    status = 400;
+    errorInfo = "number field MUST be a string";
+  } else {
+    const isExist = persons.some((person) => person.name === name);
+    if (isExist) {
+      status = 409;
+      errorInfo = "name must be unique";
+      persons.push({
+        name,
+        number,
+        id: generateRandomId(),
+      });
+    }
+  }
+  console.log(name, number, status, errorInfo);
+  response.status(status);
+  if (errorInfo !== "") response.json({ error: errorInfo });
+  response.end();
 });
 const PORT = 3001;
 
