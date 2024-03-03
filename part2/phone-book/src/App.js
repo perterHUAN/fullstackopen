@@ -75,7 +75,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Message message={message} />
+      {message && <Message message={message} />}
       <Filter search={search} handleSearchChange={handleSearchChange} />
       <h2>add a new</h2>
       <PersonForm

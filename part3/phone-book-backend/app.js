@@ -3,6 +3,14 @@ const morgan = require("morgan");
 
 const app = express();
 
+/*
+  enable cors
+  frontend 3000
+  backend 3001
+*/
+const cors = require("cors");
+app.use(cors());
+
 app.use(express.json());
 /*
   use the morgan middleware with the customize configure 
@@ -17,26 +25,26 @@ app.use(
   )
 );
 
-const persons = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
-    number: "040-123456",
+    phoneNumber: "040-123456",
   },
   {
     id: 2,
     name: "Ada Lovelace",
-    number: "39-44-5323523",
+    phoneNumber: "39-44-5323523",
   },
   {
     id: 3,
     name: "Dan Abramov",
-    number: "12-43-234345",
+    phoneNumber: "12-43-234345",
   },
   {
     id: 4,
     name: "Mary Poppendieck",
-    number: "39-23-6423122",
+    phoneNumber: "39-23-6423122",
   },
 ];
 /*
@@ -102,33 +110,40 @@ function generateRandomId() {
 }
 
 app.post("/api/persons", (request, response) => {
-  const { name, number } = request.body;
+  const { name, phoneNumber } = request.body;
   let status = 201;
   let errorInfo = "";
-  if (!name || !number) {
+  let newEntry = null;
+  if (!name || !phoneNumber) {
     status = 400;
-    errorInfo = "MUST include the name and number field";
+    errorInfo = "MUST include the name and phoneNumber field";
   } else if (typeof name !== "string") {
     status = 400;
     errorInfo = "name field MUST be a string";
-  } else if (typeof number !== "string") {
+  } else if (typeof phoneNumber !== "string") {
     status = 400;
-    errorInfo = "number field MUST be a string";
+    errorInfo = "phoneNumber field MUST be a string";
   } else {
     const isExist = persons.some((person) => person.name === name);
     if (isExist) {
       status = 409;
       errorInfo = "name must be unique";
-      persons.push({
+    } else {
+      newEntry = {
         name,
-        number,
+        phoneNumber,
         id: generateRandomId(),
-      });
+      };
+      persons.push(newEntry);
     }
   }
-  console.log(name, number, status, errorInfo);
+  console.log(name, phoneNumber, status, errorInfo);
   response.status(status);
   if (errorInfo !== "") response.json({ error: errorInfo });
+  if (newEntry !== null) {
+    console.log("entry:", newEntry);
+    response.json(newEntry);
+  }
   response.end();
 });
 const PORT = 3001;
