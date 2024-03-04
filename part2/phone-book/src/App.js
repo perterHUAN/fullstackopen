@@ -51,15 +51,17 @@ function App() {
       }
 
       return;
+    } else {
+      postNewEntry({ name: newName, phoneNumber: phoneNumber })
+        .then((data) => {
+          setMessage(`Added ${newName}`);
+          setTimeout(() => setMessage(""), 2000);
+          setPersons(persons.concat(data));
+        })
+        .catch((error) => console.log("generate error: ", error));
     }
-
-    postNewEntry({ name: newName, phoneNumber: phoneNumber })
-      .then((data) => {
-        setMessage(`Added ${newName}`);
-        setTimeout(() => setMessage(""), 2000);
-        setPersons(persons.concat(data));
-      })
-      .catch((error) => console.log("generate error: ", error));
+    setNewName("");
+    setPhoneNumber("");
   }
   function handleSearchChange(event) {
     const value = event.target.value;
