@@ -1,5 +1,11 @@
 import axios from "axios";
-const baseUrl = "http://localhost:3001/api/persons";
+/*
+  use relative path, because the backend code and
+  frontend code in the same root directory.
+
+  but if we run in development, it will be wrong.
+*/
+const baseUrl = "/api/persons";
 function getAll() {
   return axios.get(baseUrl).then((response) => response.data);
 }

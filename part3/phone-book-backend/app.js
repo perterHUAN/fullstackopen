@@ -11,6 +11,12 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 
+
+/*
+  serve static source,such as html, javascript,css..
+*/
+app.use(express.static('build'));
+
 app.use(express.json());
 /*
   use the morgan middleware with the customize configure 
