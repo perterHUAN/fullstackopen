@@ -1,3 +1,5 @@
+require("dotenv").config();
+const PhoneBook = require("./module/phoneBook");
 const express = require("express");
 const morgan = require("morgan");
 
@@ -11,11 +13,10 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 
-
 /*
   serve static source,such as html, javascript,css..
 */
-app.use(express.static('build'));
+app.use(express.static("build"));
 
 app.use(express.json());
 /*
@@ -59,7 +60,9 @@ let persons = [
   in the format of JSON.
 */
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  PhoneBook.find({}).then((result) => {
+    response.json(result);
+  });
 });
 /*
   Get /info
@@ -152,6 +155,6 @@ app.post("/api/persons", (request, response) => {
   }
   response.end();
 });
-const PORT = 3001;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => console.log("connect!!!"));

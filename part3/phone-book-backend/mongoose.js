@@ -20,7 +20,7 @@ const url =
 
 async function connectThenAddOrQuery() {
   const schema = new mongoose.Schema({ name: String, phoneNumber: String });
-  const PhoneBook = new mongoose.model("PhoneBook", schema);
+  const PhoneBook = mongoose.model("PhoneBook", schema);
   try {
     await mongoose.connect(url.replace(/<password>/, password));
     console.log("connect successful!!!");
