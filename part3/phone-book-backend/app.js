@@ -118,7 +118,7 @@ function generateRandomId() {
   return Math.floor(Math.random() * 10000);
 }
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", async (request, response) => {
   const { name, phoneNumber } = request.body;
   let status = 201;
   let errorInfo = "";
@@ -141,9 +141,7 @@ app.post("/api/persons", (request, response) => {
       newEntry = {
         name,
         phoneNumber,
-        id: generateRandomId(),
       };
-      persons.push(newEntry);
     }
   }
   console.log(name, phoneNumber, status, errorInfo);
@@ -151,7 +149,13 @@ app.post("/api/persons", (request, response) => {
   if (errorInfo !== "") response.json({ error: errorInfo });
   if (newEntry !== null) {
     console.log("entry:", newEntry);
-    response.json(newEntry);
+    const phoneBook = new PhoneBook(newEntry);
+    await phoneBook
+      .save()
+      .then((result) => {
+        response.json(result);
+      })
+      .catch((error) => console.log("save failed: ", error));
   }
   response.end();
 });
