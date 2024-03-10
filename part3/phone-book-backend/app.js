@@ -95,14 +95,15 @@ app.get("/api/persons/:id", (request, response) => {
   delete the person which id is equal to the id given in url
 */
 app.delete("/api/persons/:id", (request, response) => {
-  const id = +request.params.id;
-  const isExist = persons.some((person) => person.id === id);
-  if (isExist) {
-    persons = persons.filter((persons) => persons.id !== id);
-    response.status(200).end();
-  } else {
-    response.status(404).end();
-  }
+  PhoneBook.findByIdAndDelete(request.params.id)
+    .then(() => {
+      // 204 No content delete successfully
+      response.status(204).end();
+    })
+    .catch((error) => {
+      // handle errors uniformly in one place.
+      next(error);
+    });
 });
 
 /*
@@ -114,10 +115,6 @@ app.delete("/api/persons/:id", (request, response) => {
   * Invalid format for the name or number field.
   * A record with the same name already exists in the phone book.
 */
-function generateRandomId() {
-  return Math.floor(Math.random() * 10000);
-}
-
 app.post("/api/persons", async (request, response) => {
   const { name, phoneNumber } = request.body;
   let status = 201;
@@ -159,6 +156,22 @@ app.post("/api/persons", async (request, response) => {
   }
   response.end();
 });
+
+// handle erros uniformly in this place.
+const errorHandle = (error, request, response, next) => {
+  conosle.log(error.message);
+  if (error.name === "CastError") {
+    // malformat
+    // 400  Bad request
+    return response.status(400).send("malformat Id");
+  }
+  // other reasons for the occurrance of errors
+  next(error);
+};
+
+// Finally, add the errorHandle middleware.
+app.use(errorHandle);
+
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => console.log("connect!!!"));
