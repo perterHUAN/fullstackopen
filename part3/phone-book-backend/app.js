@@ -105,46 +105,20 @@ app.delete("/api/persons/:id", (request, response) => {
   * Invalid format for the name or number field.
   * A record with the same name already exists in the phone book.
 */
-app.post("/api/persons", async (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const { name, phoneNumber } = request.body;
-  let status = 201;
-  let errorInfo = "";
-  let newEntry = null;
-  if (!name || !phoneNumber) {
-    status = 400;
-    errorInfo = "MUST include the name and phoneNumber field";
-  } else if (typeof name !== "string") {
-    status = 400;
-    errorInfo = "name field MUST be a string";
-  } else if (typeof phoneNumber !== "string") {
-    status = 400;
-    errorInfo = "phoneNumber field MUST be a string";
-  } else {
-    const isExist = (await PhoneBook.find({ name })).length > 0;
-    if (isExist) {
-      status = 409;
-      errorInfo = "name must be unique";
-    } else {
-      newEntry = {
-        name,
-        phoneNumber,
-      };
-    }
-  }
-  console.log(name, phoneNumber, status, errorInfo);
-  response.status(status);
-  if (errorInfo !== "") response.json({ error: errorInfo });
-  if (newEntry !== null) {
-    console.log("entry:", newEntry);
-    const phoneBook = new PhoneBook(newEntry);
-    await phoneBook
-      .save()
-      .then((result) => {
-        response.json(result);
-      })
-      .catch((error) => console.log("save failed: ", error));
-  }
-  response.end();
+  const phoneBook = new PhoneBook({ name, phoneNumber });
+  phoneBook
+    .save()
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => {
+      // what errors may occur
+      // validation error
+      // if there an existing phone book entry with the same name, what happens?
+      next(error);
+    });
 });
 
 /*
@@ -158,8 +132,15 @@ app.put("/api/persons/:id", (request, response, next) => {
     phoneNumber: body.phoneNumber,
   };
   // set {new: true}, or the returned updatePhoneBookEntry will be the origin one rather than the updated version
-  PhoneBook.findByIdAndUpdate(request.params.id, phoneBookEntry, { new: true })
+  // findByIdAndUpdate is implemented base onc findOneAndUpate, which by default does
+  // not to execute validation. Therefore, we need to explicitly set it.
+  PhoneBook.findByIdAndUpdate(request.params.id, phoneBookEntry, {
+    new: true,
+    runValidators: true,
+  })
     .then((updatePhoneBookEntry) => {
+      // if a given id entry is not found, what does it return ?
+      // how should the return value be handled in the frontend ?
       console.log("update: ", updatePhoneBookEntry);
       response.json(updatePhoneBookEntry);
     })
@@ -175,7 +156,9 @@ const errorHandle = (error, request, response, next) => {
   if (error.name === "CastError") {
     // malformat
     // 400  Bad request
-    return response.status(400).send("malformat Id");
+    return response.status(400).send({ error: "malformat Id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).send({ error: error.message });
   }
   // other reasons for the occurrance of errors
   next(error);

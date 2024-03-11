@@ -58,7 +58,9 @@ function App() {
           setTimeout(() => setMessage(""), 2000);
           setPersons(persons.concat(data));
         })
-        .catch((error) => console.log("generate error: ", error));
+        .catch((error) => {
+          setMessage(error.response.data.error);
+        });
     }
     setNewName("");
     setPhoneNumber("");
@@ -70,7 +72,9 @@ function App() {
   function handleDelete(id) {
     deletEntry(id)
       .then((_) => setPersons(persons.filter((person) => person.id !== id)))
-      .catch((error) => console.log("error: ", error));
+      .catch((error) => {
+        setMessage(error.response.data.error);
+      });
   }
   const reg = new RegExp(search, "i");
   const searchPersons = persons.filter((person) => reg.test(person.name));
