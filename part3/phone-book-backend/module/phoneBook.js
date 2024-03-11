@@ -12,9 +12,19 @@ mongoose
   .then((result) => console.log("connect to MongoDB"))
   .catch((error) => console.log("error connecting to MongoDB:", error.message));
 
+// add validator
 const phoneBookSchema = new mongoose.Schema({
-  name: String,
-  phoneNumber: String,
+  name: { type: String, minLength: 3, required: true },
+  phoneNumber: {
+    type: String,
+    validate: {
+      validator: (v) => {
+        return /^\d{2,3}-\d+$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number`,
+    },
+    require: true,
+  },
 });
 
 phoneBookSchema.set("toJSON", {
