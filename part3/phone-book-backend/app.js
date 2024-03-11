@@ -158,6 +158,7 @@ app.post("/api/persons", async (request, response) => {
 });
 
 // handle erros uniformly in this place.
+// move the err handling logic to an error handling middleware
 const errorHandle = (error, request, response, next) => {
   conosle.log(error.message);
   if (error.name === "CastError") {
