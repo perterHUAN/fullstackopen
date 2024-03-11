@@ -157,6 +157,26 @@ app.post("/api/persons", async (request, response) => {
   response.end();
 });
 
+/*
+  Put /api/persons/id
+  update the existing phone book entry
+*/
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+  const phoneBookEntry = {
+    name: body.name,
+    phoneNumber: body.phoneNumber,
+  };
+  // set {new: true}, or the returned updatePhoneBookEntry will be the origin one rather than the updated version
+  PhoneBook.findByIdAndUpdate(request.params.id, phoneBookEntry, { new: true })
+    .then((updatePhoneBookEntry) => {
+      response.json(updatePhoneBookEntry);
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
 // handle erros uniformly in this place.
 // move the err handling logic to an error handling middleware
 const errorHandle = (error, request, response, next) => {
