@@ -44,8 +44,8 @@ function App() {
         }).then((response) => {
           setPersons(
             persons
-              .filter((person) => person.name !== response.name)
-              .concat(response)
+              .filter((person) => person.name !== newName)
+              .concat(response || [])
           );
         });
       }

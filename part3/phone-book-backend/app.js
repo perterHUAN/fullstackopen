@@ -32,28 +32,6 @@ app.use(
   )
 );
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    phoneNumber: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    phoneNumber: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    phoneNumber: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    phoneNumber: "39-23-6423122",
-  },
-];
 /*
   Get /api/persons
   respond with an array of persons' name and phone number
@@ -69,12 +47,18 @@ app.get("/api/persons", (request, response) => {
   respond with the html content which describes
   the length of the notes and the time at which the response is sent.
 */
-app.get("/info", (request, response) => {
-  const body = `
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${new Date()}<p>
-  `;
-  response.send(body);
+app.get("/info", (request, response, next) => {
+  PhoneBook.countDocuments({})
+    .then((count) => {
+      const body = `
+        <p>Phonebook has info for ${count} people</p>
+        <p>${new Date()}<p>
+      `;
+      response.send(body);
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 /*
@@ -83,11 +67,16 @@ app.get("/info", (request, response) => {
   if don't exist, return  404
 */
 
-app.get("/api/persons/:id", (request, response) => {
-  const id = +request.params.id;
-  const result = persons.filter((person) => person.id === id);
-  if (result.length === 0) response.status(404).end();
-  else response.send(result[0]);
+app.get("/api/persons/:id", (request, response, next) => {
+  PhoneBook.findById(request.params.id)
+    .then((result) => {
+      if (result) {
+        response.send(result);
+      } else {
+        response.status(404).send("<h1>404<h1>");
+      }
+    })
+    .catch((error) => next(error));
 });
 
 /*
@@ -96,8 +85,9 @@ app.get("/api/persons/:id", (request, response) => {
 */
 app.delete("/api/persons/:id", (request, response) => {
   PhoneBook.findByIdAndDelete(request.params.id)
-    .then(() => {
+    .then((result) => {
       // 204 No content delete successfully
+      console.log("delete: ", result);
       response.status(204).end();
     })
     .catch((error) => {
@@ -130,7 +120,7 @@ app.post("/api/persons", async (request, response) => {
     status = 400;
     errorInfo = "phoneNumber field MUST be a string";
   } else {
-    const isExist = persons.some((person) => person.name === name);
+    const isExist = (await PhoneBook.find({ name })).length > 0;
     if (isExist) {
       status = 409;
       errorInfo = "name must be unique";
@@ -170,6 +160,7 @@ app.put("/api/persons/:id", (request, response, next) => {
   // set {new: true}, or the returned updatePhoneBookEntry will be the origin one rather than the updated version
   PhoneBook.findByIdAndUpdate(request.params.id, phoneBookEntry, { new: true })
     .then((updatePhoneBookEntry) => {
+      console.log("update: ", updatePhoneBookEntry);
       response.json(updatePhoneBookEntry);
     })
     .catch((error) => {
@@ -180,7 +171,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 // handle erros uniformly in this place.
 // move the err handling logic to an error handling middleware
 const errorHandle = (error, request, response, next) => {
-  conosle.log(error.message);
+  console.log(error.message);
   if (error.name === "CastError") {
     // malformat
     // 400  Bad request
