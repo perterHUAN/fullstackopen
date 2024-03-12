@@ -2,8 +2,20 @@ require("dotenv").config();
 const PhoneBook = require("./module/phoneBook");
 const express = require("express");
 const morgan = require("morgan");
+const mongoose = require("mongoose");
 
 const app = express();
+
+// connect to database
+const mongoUrl = process.env.MONGODB_URI;
+mongoose
+  .connect(mongoUrl)
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("Error connecting to MongoDB:", error.message);
+  });
 
 /*
   enable cors
