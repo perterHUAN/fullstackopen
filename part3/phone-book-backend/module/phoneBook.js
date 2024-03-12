@@ -15,7 +15,16 @@ mongoose
 // add validator
 const phoneBookSchema = new mongoose.Schema({
   name: { type: String, minLength: 3, required: true },
-  phoneNumber: { type: String, minLength: 3, require: true },
+  phoneNumber: {
+    type: String,
+    validate: {
+      validator: (v) => {
+        return /^\d{2,3}-\d+$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number`,
+    },
+    require: true,
+  },
 });
 
 phoneBookSchema.set("toJSON", {

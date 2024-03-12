@@ -41,16 +41,18 @@ function App() {
         updateEntry(persons.find((person) => person.name === newName).id, {
           name: newName,
           phoneNumber: phoneNumber,
-        }).then((response) => {
-          setPersons(
-            persons
-              .filter((person) => person.name !== newName)
-              .concat(response || [])
-          );
-        });
+        })
+          .then((response) => {
+            setPersons(
+              persons
+                .filter((person) => person.name !== newName)
+                .concat(response || [])
+            );
+          })
+          .catch((error) => {
+            setMessage(error.response.data.error);
+          });
       }
-
-      return;
     } else {
       postNewEntry({ name: newName, phoneNumber: phoneNumber })
         .then((data) => {

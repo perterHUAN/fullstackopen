@@ -12,7 +12,7 @@ function getAll() {
 
 function postNewEntry(data) {
   return axios.post(baseUrl, data).then((response) => {
-    console.log(response);
+    console.log("post: ", response.data);
     return response.data;
   });
 }
@@ -21,7 +21,7 @@ function deletEntry(id) {
 }
 function updateEntry(id, data) {
   return axios.put(`${baseUrl}/${id}`, data).then((response) => {
-    console.log(response.data);
+    console.log("update: ", response.data);
     return response.data;
   });
 }
