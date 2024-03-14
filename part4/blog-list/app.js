@@ -8,9 +8,11 @@ const blogRouter = require("./controls/blog");
 const mongoose = require("mongoose");
 
 logger.info("start to connect to MongoDB", config.MONGODB_URI);
+
+// when/where to close the connection to mongodb? 
 mongoose
   .connect(config.MONGODB_URI)
-  .then(() => logger.info("connected to MongoDB!"))
+  .then(() => logger.info("connected to MongoDB successful!"))
   .catch((error) =>
     logger.error("error connecting to MongoDB: ", error.message)
   );

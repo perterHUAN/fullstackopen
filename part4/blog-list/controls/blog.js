@@ -1,13 +1,13 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
+// we don't need to write try-catch in middleware, it can help
+// us handle error.
+require("express-async-error");
 
 // the path becomes shorter.
-blogRouter.get("/", (request, response, next) => {
-  Blog.find({})
-    .then((blogs) => {
-      response.json(blogs);
-    })
-    .catch((error) => next(error));
+blogRouter.get("/", async (request, response) => {
+  const blogs = await Blog.find({});
+  response.json(blogs);
 });
 
 blogRouter.post("/", (request, response) => {
