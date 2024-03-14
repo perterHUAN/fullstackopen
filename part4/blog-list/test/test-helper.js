@@ -55,8 +55,20 @@ const nonExistingId = async () => {
 
   return blog._id.toString();
 };
+
+const existingId = async () => {
+  const blog = new Blog({
+    title: "full stack open part 4",
+    author: "peter",
+    url: "https://fullstackopen.com/en/part4/testing_the_backend",
+  });
+
+  const res = await blog.save();
+  return res._id.toString();
+};
 module.exports = {
   initialBlogs,
   blogsInDB,
   nonExistingId,
+  existingId,
 };

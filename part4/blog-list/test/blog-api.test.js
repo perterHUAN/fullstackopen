@@ -127,6 +127,30 @@ describe("GET /api/blogs/:id", () => {
     await api.get(`/api/blogs/${id}`).expect(400);
   });
 });
+
+describe("delete /api/blogs/:id", () => {
+  it("an existed id", async () => {
+    const id = await helper.existingId();
+    const blogsBeforeDelete = await helper.blogsInDB();
+    await api.delete(`/api/blogs/${id}`);
+    const blogsAfterDelete = await helper.blogsInDB();
+
+    assert.equal(blogsBeforeDelete.length, blogsAfterDelete.length + 1);
+  });
+
+  it("a non existing id", async () => {
+    const id = await helper.nonExistingId();
+    // Not Found
+    await api.delete(`/api/blogs/${id}`).expect(404);
+  });
+
+  it("a invalid id", async () => {
+    const id = "sing424235fsfs";
+    // bad request
+    await api.delete(`/api/blogs/${id}`).expect(400);
+  });
+});
+
 after(async () => {
   await mongoose.connection.close();
   // console.log("close connection sucessfully");
