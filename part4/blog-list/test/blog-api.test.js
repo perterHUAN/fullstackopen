@@ -19,8 +19,10 @@ beforeEach(async () => {
 
 describe("get /api/blogs", () => {
   it("blogs are returned as json", async () => {
-    const response = await api.get("/api/blogs");
-
+    const response = await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("content-type", /application\/json/);
     assert.equal(
       /application\/json/.test(response.header["content-type"]),
       true
@@ -28,14 +30,20 @@ describe("get /api/blogs", () => {
   });
 
   it("there are six blogs", async () => {
-    const response = await api.get("/api/blogs");
+    const response = await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("content-type", /application\/json/);
     assert.equal(response.body.length, 6);
   });
 });
 
 describe("id property", () => {
   it("the unique identifier property of the blog posts is named id", async () => {
-    const response = await api.get("/api/blogs");
+    const response = await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("content-type", /application\/json/);
     assert.ok(response.body[0].hasOwnProperty("id"));
   });
 });
@@ -49,7 +57,11 @@ describe("POST /api/blogs", () => {
       likes: 2,
     };
 
-    const response = await api.post("/api/blogs").send(info);
+    const response = await api
+      .post("/api/blogs")
+      .send(info)
+      .expect(201)
+      .expect("content-type", /application\/json/);
     const newBlog = response.body;
     assert.equal(newBlog.title, info.title);
     assert.equal(newBlog.author, info.author);
@@ -60,6 +72,20 @@ describe("POST /api/blogs", () => {
     // length + 1
     const blogsAtEnd = await helper.blogsInDB();
     assert.equal(blogsAtEnd.length, helper.initialBlogs.length + 1);
+  });
+
+  it(" if the likes property is missing from the request, it will default to the value 0.", async () => {
+    const info = {
+      title: "full stack open part 4",
+      author: "peter",
+      url: "https://fullstackopen.com/en/part4/testing_the_backend",
+    };
+    const response = await api
+      .post("/api/blogs")
+      .send(info)
+      .expect(201)
+      .expect("content-type", /application\/json/);
+    assert.equal(response.body.likes, 0);
   });
 });
 after(async () => {
