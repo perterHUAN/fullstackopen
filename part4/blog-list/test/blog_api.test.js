@@ -72,6 +72,13 @@ describe("get /api/blogs", () => {
   });
 });
 
+describe("id property", () => {
+  it("the unique identifier property of the blog posts is named id", async () => {
+    const response = await api.get("/api/blogs");
+    assert.ok(response.body[0].hasOwnProperty("id"));
+  });
+});
+
 after(async () => {
   await mongoose.connection.close();
   console.log("close connection sucessfully");
