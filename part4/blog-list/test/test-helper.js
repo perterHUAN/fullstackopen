@@ -45,7 +45,11 @@ const blogsInDB = async () => {
 };
 
 const nonExistingId = async () => {
-  const blog = new Blog();
+  const blog = new Blog({
+    title: "full stack open part 4",
+    author: "peter",
+    url: "https://fullstackopen.com/en/part4/testing_the_backend",
+  });
   await blog.save();
   await blog.deleteOne();
 

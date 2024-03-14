@@ -87,6 +87,15 @@ describe("POST /api/blogs", () => {
       .expect("content-type", /application\/json/);
     assert.equal(response.body.likes, 0);
   });
+
+  it("valid request data, missing title or url propterty", async () => {
+    const validInfo = {
+      author: "peter",
+      url: "https://fullstackopen.com/en/part4/testing_the_backend",
+    };
+
+    await api.post("/api/blogs").send(validInfo).expect(400);
+  });
 });
 
 describe("GET /api/blogs/:id", () => {
