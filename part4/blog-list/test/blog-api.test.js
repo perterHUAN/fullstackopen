@@ -129,7 +129,7 @@ describe("GET /api/blogs/:id", () => {
 });
 
 describe("delete /api/blogs/:id", () => {
-  it("an existed id", async () => {
+  it("an existing id", async () => {
     const id = await helper.existingId();
     const blogsBeforeDelete = await helper.blogsInDB();
     await api.delete(`/api/blogs/${id}`);
@@ -138,19 +138,64 @@ describe("delete /api/blogs/:id", () => {
     assert.equal(blogsBeforeDelete.length, blogsAfterDelete.length + 1);
   });
 
-  it("a non existing id", async () => {
+  it("a none existing id", async () => {
     const id = await helper.nonExistingId();
     // Not Found
     await api.delete(`/api/blogs/${id}`).expect(404);
   });
 
-  it("a invalid id", async () => {
+  it("an invalid id", async () => {
     const id = "sing424235fsfs";
     // bad request
     await api.delete(`/api/blogs/${id}`).expect(400);
   });
 });
 
+describe("PUT /api/blogs/:id", () => {
+  it("an existing id", async () => {
+    const id = await helper.existingId();
+
+    const response1 = await api.get(`/api/blogs/${id}`);
+    const blogBeforeUpdate = response1.body;
+
+    const response2 = await api.put(`/api/blogs/${id}`).send({
+      title: blogBeforeUpdate.title,
+      author: blogBeforeUpdate.author,
+      url: blogBeforeUpdate.url,
+      likes: blogBeforeUpdate.likes + 1,
+    });
+    const blogAfterUpdate = response2.body;
+
+    assert.equal(blogBeforeUpdate.likes + 1, blogAfterUpdate.likes);
+  });
+
+  it("a none existing id", async () => {
+    const id = await helper.nonExistingId();
+
+    await api
+      .put(`/api/blogs/${id}`)
+      .send({
+        title: "full stack open part 4",
+        author: "peter",
+        url: "https://fullstackopen.com/en/part4/testing_the_backend",
+        likes: 1,
+      })
+      .expect(404);
+  });
+
+  it("an invalid id", async () => {
+    const id = "sign4234234";
+    await api
+      .put(`/api/blogs/${id}`)
+      .send({
+        title: "full stack open part 4",
+        author: "peter",
+        url: "https://fullstackopen.com/en/part4/testing_the_backend",
+        likes: 1,
+      })
+      .expect(400);
+  });
+});
 after(async () => {
   await mongoose.connection.close();
   // console.log("close connection sucessfully");

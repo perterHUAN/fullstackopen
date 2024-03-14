@@ -49,6 +49,7 @@ const nonExistingId = async () => {
     title: "full stack open part 4",
     author: "peter",
     url: "https://fullstackopen.com/en/part4/testing_the_backend",
+    likes: 1,
   });
   await blog.save();
   await blog.deleteOne();
@@ -61,6 +62,7 @@ const existingId = async () => {
     title: "full stack open part 4",
     author: "peter",
     url: "https://fullstackopen.com/en/part4/testing_the_backend",
+    likes: 1,
   });
 
   const res = await blog.save();
