@@ -40,12 +40,19 @@ const initialBlogs = [
 
 const blogsInDB = async () => {
   const result = await Blog.find({});
-  // not must to call toJSON
-  // In route, send or json method will call toJSON
+  // need to call toJSON method, because we don't request it through routing.
   return result.map((e) => e.toJSON());
 };
 
+const nonExistingId = async () => {
+  const blog = new Blog();
+  await blog.save();
+  await blog.deleteOne();
+
+  return blog._id.toString();
+};
 module.exports = {
   initialBlogs,
   blogsInDB,
+  nonExistingId,
 };

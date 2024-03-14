@@ -88,6 +88,36 @@ describe("POST /api/blogs", () => {
     assert.equal(response.body.likes, 0);
   });
 });
+
+describe("GET /api/blogs/:id", () => {
+  it("return the blog with the same request id", async () => {
+    const info = {
+      title: "full stack open part 4",
+      author: "peter",
+      url: "https://fullstackopen.com/en/part4/testing_the_backend",
+    };
+    const response1 = await api.post("/api/blogs").send(info);
+    const response2 = await api.get(`/api/blogs/${response1.body.id}`);
+
+    for (const e in info) {
+      if (info.hasOwnProperty(e)) {
+        assert.equal(info[e], response2.body[e]);
+      }
+    }
+  });
+
+  it("request no existed id", async () => {
+    const id = await helper.nonExistingId();
+    // 404 Not Found
+    await api.get(`/api/blogs/${id}`).expect(404);
+  });
+
+  it("request invalid id", async () => {
+    const id = "sgisn4234823094";
+    // next(error)  castError 400
+    await api.get(`/api/blogs/${id}`).expect(400);
+  });
+});
 after(async () => {
   await mongoose.connection.close();
   // console.log("close connection sucessfully");
