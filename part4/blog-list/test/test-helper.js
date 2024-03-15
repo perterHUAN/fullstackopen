@@ -1,4 +1,5 @@
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const initialBlogs = [
   {
     title: "React patterns",
@@ -39,9 +40,9 @@ const initialBlogs = [
 ];
 
 const blogsInDB = async () => {
-  const result = await Blog.find({});
+  const blogs = await Blog.find({});
   // need to call toJSON method, because we don't request it through routing.
-  return result.map((e) => e.toJSON());
+  return blogs.map((blog) => blog.toJSON());
 };
 
 const nonExistingId = async () => {
@@ -68,9 +69,15 @@ const existingId = async () => {
   const res = await blog.save();
   return res._id.toString();
 };
+
+const usersInDB = async () => {
+  const users = await User.find({});
+  return users.map((user) => user.toJSON());
+};
 module.exports = {
   initialBlogs,
   blogsInDB,
   nonExistingId,
   existingId,
+  usersInDB,
 };

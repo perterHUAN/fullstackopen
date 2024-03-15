@@ -4,12 +4,13 @@ const config = require("./utils/config");
 const cors = require("cors");
 const middleware = require("./utils/middleware");
 const blogRouter = require("./controls/blog");
+const userRouter = require("./controls/user");
 
 const mongoose = require("mongoose");
 
 logger.info("start to connect to MongoDB", config.MONGODB_URI);
 
-// when/where to close the connection to mongodb? 
+// when/where to close the connection to mongodb?
 mongoose
   .connect(config.MONGODB_URI)
   .then(() => logger.info("connected to MongoDB successful!"))
@@ -25,7 +26,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 
 app.use("/api/blogs", blogRouter);
-
+app.use("/api/users", userRouter);
 // don't match any path
 app.use(middleware.unknownEndpoint);
 
