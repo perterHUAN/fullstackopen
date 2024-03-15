@@ -1,9 +1,20 @@
 const mongoose = require("mongoose");
 
+// validating the format of the passwordHash is meaningless.
 const userSchema = new mongoose.Schema({
   name: String,
-  username: String,
-  passwordHash: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: function (v) {
+        return /\w{3,}/.test(v);
+      },
+      message: (props) => `username must be at least 3 characters.`,
+    },
+  },
+  passwordHash: { type: String, required: true },
 });
 
 userSchema.set("toJSON", {
