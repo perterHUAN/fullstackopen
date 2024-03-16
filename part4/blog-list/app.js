@@ -5,6 +5,7 @@ const cors = require("cors");
 const middleware = require("./utils/middleware");
 const blogRouter = require("./controls/blog");
 const userRouter = require("./controls/user");
+const loginRouter = require("./controls/login");
 
 const mongoose = require("mongoose");
 
@@ -25,6 +26,7 @@ app.use(express.json());
 // after expresson.jon() to ensure we obtain a valid blog.
 app.use(middleware.requestLogger);
 
+app.use("/api/login", loginRouter);
 app.use("/api/blogs", blogRouter);
 app.use("/api/users", userRouter);
 // don't match any path
