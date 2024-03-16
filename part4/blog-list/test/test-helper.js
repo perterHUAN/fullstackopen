@@ -1,5 +1,7 @@
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
+const assert = require("node:assert");
 const initialBlogs = [
   {
     title: "React patterns",
@@ -74,10 +76,36 @@ const usersInDB = async () => {
   const users = await User.find({});
   return users.map((user) => user.toJSON());
 };
+
+const getOneUserId = async () => {
+  const name = "test-post-user";
+  const username = "test-post-user";
+  const password = "131334234";
+
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(password, saltRounds);
+
+  const testUser = new User({
+    name,
+    username,
+    passwordHash,
+    blogs: [],
+  });
+  const result = await testUser.save();
+  assert.equal(result, testUser);
+  return result.id;
+};
+
+const getOneUser = async (id) => {
+  const user = await User.findById(id);
+  return user;
+};
 module.exports = {
   initialBlogs,
   blogsInDB,
   nonExistingId,
   existingId,
   usersInDB,
+  getOneUserId,
+  getOneUser,
 };

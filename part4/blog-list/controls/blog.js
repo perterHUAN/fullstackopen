@@ -1,4 +1,5 @@
 const blogRouter = require("express").Router();
+const User = require("../models/user");
 const Blog = require("../models/blog");
 // we don't need to write try-catch in middleware, it can help
 // us handle error.
@@ -11,9 +12,27 @@ blogRouter.get("/", async (request, response) => {
 });
 
 blogRouter.post("/", async (request, response) => {
-  const blog = new Blog(request.body);
+  const body = request.body;
 
-  const result = await blog.save();
+  // If userId don't exist, what happen ?
+  const user = await User.findById(body.userId);
+  if (!user) {
+    // 404 Not Found
+    return response.status(404).send({ error: "User Not Found" });
+  }
+
+  const newBlog = new Blog({
+    user: user.id,
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+  });
+
+  const result = await newBlog.save();
+
+  user.blogs = user.blogs.concat(result.id);
+  await user.save();
   response.status(201).json(result);
 });
 

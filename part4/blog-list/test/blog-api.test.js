@@ -1,6 +1,7 @@
 const { describe, it, after, beforeEach } = require("node:test");
 const assert = require("node:assert");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const helper = require("./test-helper");
 
 const app = require("../app");
@@ -10,7 +11,10 @@ const supertest = require("supertest");
 const api = supertest(app);
 
 beforeEach(async () => {
+  // clear all blogs
   await Blog.deleteMany();
+  // clear all users
+  await User.deleteMany();
 
   const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
   const promiseArray = blogObjects.map((blog) => blog.save());
@@ -50,11 +54,15 @@ describe("id property", () => {
 
 describe("POST /api/blogs", () => {
   it("a valid note can be added", async () => {
+    // first create a user
+    const userId = await helper.getOneUserId();
+    // create a blog with userId
     const info = {
       title: "full stack open part 4",
       author: "peter",
       url: "https://fullstackopen.com/en/part4/testing_the_backend",
       likes: 2,
+      userId,
     };
 
     const response = await api
@@ -62,23 +70,30 @@ describe("POST /api/blogs", () => {
       .send(info)
       .expect(201)
       .expect("content-type", /application\/json/);
-    const newBlog = response.body;
-    assert.equal(newBlog.title, info.title);
-    assert.equal(newBlog.author, info.author);
-    assert.equal(newBlog.url, info.url);
-    assert.equal(newBlog.likes, info.likes);
-    assert.ok(newBlog.hasOwnProperty("id"));
+    const savedBlog = response.body;
+    assert.equal(savedBlog.title, info.title);
+    assert.equal(savedBlog.author, info.author);
+    assert.equal(savedBlog.url, info.url);
+    assert.equal(savedBlog.likes, info.likes);
+    assert.equal(savedBlog.user, userId);
+    assert.ok(savedBlog.hasOwnProperty("id"));
 
+    // check wheter user's blogs info changed
+    const user = await helper.getOneUser(savedBlog.user);
+    assert.ok(user);
+    assert.ok(user.blogs.some((e) => e.toJSON() === savedBlog.id));
     // length + 1
     const blogsAtEnd = await helper.blogsInDB();
     assert.equal(blogsAtEnd.length, helper.initialBlogs.length + 1);
   });
 
   it(" if the likes property is missing from the request, it will default to the value 0.", async () => {
+    const userId = await helper.getOneUserId();
     const info = {
       title: "full stack open part 4",
       author: "peter",
       url: "https://fullstackopen.com/en/part4/testing_the_backend",
+      userId,
     };
     const response = await api
       .post("/api/blogs")
@@ -89,9 +104,11 @@ describe("POST /api/blogs", () => {
   });
 
   it("valid request data, missing title or url propterty", async () => {
+    const userId = await helper.getOneUserId();
     const validInfo = {
       author: "peter",
       url: "https://fullstackopen.com/en/part4/testing_the_backend",
+      userId,
     };
 
     await api.post("/api/blogs").send(validInfo).expect(400);
@@ -100,19 +117,24 @@ describe("POST /api/blogs", () => {
 
 describe("GET /api/blogs/:id", () => {
   it("return the blog with the same request id", async () => {
+    const userId = await helper.getOneUserId();
+
     const info = {
       title: "full stack open part 4",
       author: "peter",
       url: "https://fullstackopen.com/en/part4/testing_the_backend",
+      userId,
     };
     const response1 = await api.post("/api/blogs").send(info);
+
     const response2 = await api.get(`/api/blogs/${response1.body.id}`);
 
     for (const e in info) {
-      if (info.hasOwnProperty(e)) {
+      if (info.hasOwnProperty(e) && e !== "userId") {
         assert.equal(info[e], response2.body[e]);
       }
     }
+    assert.equal(response2.body.user, userId);
   });
 
   it("request no existed id", async () => {

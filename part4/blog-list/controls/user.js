@@ -22,11 +22,12 @@ userRouter.post("/", async (request, response) => {
   // in database as it's insecure.
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
-
+  console.log("password created!!!");
   const user = new User({
     username,
     name,
     passwordHash,
+    blogs: [],
   });
 
   const savedUser = await user.save();
