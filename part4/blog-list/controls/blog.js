@@ -1,6 +1,8 @@
 const blogRouter = require("express").Router();
+const assert = require("node:assert");
 const User = require("../models/user");
 const Blog = require("../models/blog");
+const jwt = require("jsonwebtoken");
 // we don't need to write try-catch in middleware, it can help
 // us handle error.
 require("express-async-errors");
@@ -11,18 +13,28 @@ blogRouter.get("/", async (request, response) => {
   response.json(blogs);
 });
 
+function getToken(request) {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    return authorization.replace("Bearer ", "");
+  }
+  return null;
+}
+
 blogRouter.post("/", async (request, response) => {
   const body = request.body;
+  const token = getToken(request);
 
-  // If userId don't exist, what happen ?
-  const user = await User.findById(body.userId);
-  if (!user) {
-    // 404 Not Found
-    return response.status(404).send({ error: "User Not Found" });
+  // may throw error
+  const decodeToken = jwt.verify(token, process.env.SECRET);
+  if (!decodeToken.id) {
+    return response.status(401).json({ error: "token invalid" });
   }
 
+  const user = await User.findById(decodeToken.id);
+
   const newBlog = new Blog({
-    user: user.id,
+    user: user._id,
     title: body.title,
     author: body.author,
     url: body.url,
@@ -30,8 +42,9 @@ blogRouter.post("/", async (request, response) => {
   });
 
   const result = await newBlog.save();
-
-  user.blogs = user.blogs.concat(result.id);
+  // same
+  assert.equal(result, newBlog);
+  user.blogs = user.blogs.concat(result._id);
   await user.save();
   response.status(201).json(result);
 });

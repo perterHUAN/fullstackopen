@@ -2,6 +2,11 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const assert = require("node:assert");
+const supertest = require("supertest");
+const app = require("../app");
+
+const api = supertest(app);
+
 const initialBlogs = [
   {
     title: "React patterns",
@@ -77,10 +82,8 @@ const usersInDB = async () => {
   return users.map((user) => user.toJSON());
 };
 
-const getOneUserId = async () => {
-  const name = "test-post-user";
-  const username = "test-post-user";
-  const password = "131334234";
+const createTestUser = async (props) => {
+  const { name, username, password } = props;
 
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -91,14 +94,37 @@ const getOneUserId = async () => {
     passwordHash,
     blogs: [],
   });
-  const result = await testUser.save();
-  assert.equal(result, testUser);
-  return result.id;
+  await testUser.save();
+  return testUser;
+};
+const getTestUserId = async () => {
+  const testUser = await createTestUser({
+    name: "test-user",
+    password: "13423",
+    username: "test-user",
+  });
+  return testUser.id;
 };
 
-const getOneUser = async (id) => {
+const getUserById = async (id) => {
   const user = await User.findById(id);
   return user;
+};
+
+const getTestUserToken = async () => {
+  // create a user
+  await createTestUser({
+    name: "test-user",
+    password: "12423",
+    username: "test-user",
+  });
+
+  // get token
+  const response = await api.post("/api/login").send({
+    username: "test-user",
+    password: "12423",
+  });
+  return response.body.token;
 };
 module.exports = {
   initialBlogs,
@@ -106,6 +132,7 @@ module.exports = {
   nonExistingId,
   existingId,
   usersInDB,
-  getOneUserId,
-  getOneUser,
+  getUserById,
+  getTestUserId,
+  getTestUserToken,
 };

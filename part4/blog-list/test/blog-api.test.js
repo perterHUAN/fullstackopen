@@ -23,7 +23,7 @@ beforeEach(async () => {
 
 describe("get /api/blogs", () => {
   it("blogs are returned as json", async () => {
-    const response = await api
+    const response = await api 
       .get("/api/blogs")
       .expect(200)
       .expect("content-type", /application\/json/);
@@ -54,19 +54,19 @@ describe("id property", () => {
 
 describe("POST /api/blogs", () => {
   it("a valid note can be added", async () => {
-    // first create a user
-    const userId = await helper.getOneUserId();
+    // first login and get token
+    const token = await helper.getTestUserToken();
     // create a blog with userId
     const info = {
       title: "full stack open part 4",
       author: "peter",
       url: "https://fullstackopen.com/en/part4/testing_the_backend",
       likes: 2,
-      userId,
     };
 
     const response = await api
       .post("/api/blogs")
+      .set("Authorization", `Bearer ${token}`)
       .send(info)
       .expect(201)
       .expect("content-type", /application\/json/);
@@ -79,7 +79,7 @@ describe("POST /api/blogs", () => {
     assert.ok(savedBlog.hasOwnProperty("id"));
 
     // check wheter user's blogs info changed
-    const user = await helper.getOneUser(savedBlog.user);
+    const user = await helper.getUserById(savedBlog.user);
     assert.ok(user);
     assert.ok(user.blogs.some((e) => e.toJSON() === savedBlog.id));
     // length + 1
@@ -88,15 +88,15 @@ describe("POST /api/blogs", () => {
   });
 
   it(" if the likes property is missing from the request, it will default to the value 0.", async () => {
-    const userId = await helper.getOneUserId();
+    const token = await helper.getTestUserToken();
     const info = {
       title: "full stack open part 4",
       author: "peter",
       url: "https://fullstackopen.com/en/part4/testing_the_backend",
-      userId,
     };
     const response = await api
       .post("/api/blogs")
+      .set("Authorization", `Bearer ${token}`)
       .send(info)
       .expect(201)
       .expect("content-type", /application\/json/);
@@ -104,20 +104,23 @@ describe("POST /api/blogs", () => {
   });
 
   it("valid request data, missing title or url propterty", async () => {
-    const userId = await helper.getOneUserId();
+    const token = await helper.getTestUserToken();
     const validInfo = {
       author: "peter",
       url: "https://fullstackopen.com/en/part4/testing_the_backend",
-      userId,
     };
 
-    await api.post("/api/blogs").send(validInfo).expect(400);
+    await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${token}`)
+      .send(validInfo)
+      .expect(400);
   });
 });
 
 describe("GET /api/blogs/:id", () => {
   it("return the blog with the same request id", async () => {
-    const userId = await helper.getOneUserId();
+    const userId = await helper.getTestUserId();
 
     const info = {
       title: "full stack open part 4",
@@ -220,5 +223,4 @@ describe("PUT /api/blogs/:id", () => {
 });
 after(async () => {
   await mongoose.connection.close();
-  // console.log("close connection sucessfully");
 });
