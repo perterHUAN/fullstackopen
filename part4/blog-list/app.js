@@ -25,6 +25,7 @@ app.use(express.json());
 // place the middleware below
 // after expresson.jon() to ensure we obtain a valid blog.
 app.use(middleware.requestLogger);
+app.use(middleware.tokenExtractor);
 
 app.use("/api/login", loginRouter);
 app.use("/api/blogs", blogRouter);

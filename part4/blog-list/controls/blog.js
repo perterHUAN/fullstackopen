@@ -23,10 +23,9 @@ function getToken(request) {
 
 blogRouter.post("/", async (request, response) => {
   const body = request.body;
-  const token = getToken(request);
 
   // may throw error
-  const decodeToken = jwt.verify(token, process.env.SECRET);
+  const decodeToken = jwt.verify(request.token, process.env.SECRET);
   if (!decodeToken.id) {
     return response.status(401).json({ error: "token invalid" });
   }
