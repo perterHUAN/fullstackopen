@@ -1,8 +1,5 @@
 const blogRouter = require("express").Router();
-const assert = require("node:assert");
-const User = require("../models/user");
 const Blog = require("../models/blog");
-const jwt = require("jsonwebtoken");
 // we don't need to write try-catch in middleware, it can help
 // us handle error.
 require("express-async-errors");

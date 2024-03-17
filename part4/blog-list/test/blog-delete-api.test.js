@@ -74,17 +74,6 @@ describe("delete /api/blogs/:id", () => {
       .expect(400);
     assert.ok(response.body.error.includes("token missing or invalid"));
   });
-  // it("a none existing id", async () => {
-  //   const id = await helper.nonExistingId();
-  //   // Not Found
-  //   await api.delete(`/api/blogs/${id}`).expect(404);
-  // });
-
-  // it("an invalid id", async () => {
-  //   const id = "sing424235fsfs";
-  //   // bad request
-  //   await api.delete(`/api/blogs/${id}`).expect(400);
-  // });
 });
 after(async () => {
   await mongoose.connection.close();
