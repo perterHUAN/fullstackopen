@@ -19,8 +19,10 @@ describe("get /api/blogs", () => {
   };
   const blogs = helper.initialBlogs;
   beforeEach(async () => {
+    await User.deleteMany();
+    await Blog.deleteMany();
     // create a user
-    await api.post("/api/users").send(user).expect(200);
+    await api.post("/api/users").send(user).expect(201);
     console.log("create user");
     // login in
     const response = await api.post("/api/login").send({
@@ -30,17 +32,26 @@ describe("get /api/blogs", () => {
     token = response.body.token;
     console.log("login in, token:", token);
     // create a series blogs
-    const createBlogsPromises = blogs.map(async (blog) => {
-      await aip
+    // error
+    // const createBlogsPromises = blogs.map(async (blog) => {
+    //   await api
+    //     .post("/api/blogs")
+    //     .set("Authorization", `Bearer ${token}`)
+    //     .send(blog)
+    //     .expect(201);
+    // });
+
+    // await Promise.all(createBlogsPromises);
+    for (const blog of blogs) {
+      await api
         .post("/api/blogs")
         .set("Authorization", `Bearer ${token}`)
         .send(blog)
         .expect(201);
-    });
-
-    await Promise.all(createBlogsPromises);
+    }
     console.log("create blog");
   });
+
   it("blogs are returned as json", async () => {
     const response = await api
       .get("/api/blogs")

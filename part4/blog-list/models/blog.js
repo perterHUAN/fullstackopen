@@ -19,7 +19,6 @@ blogSchema.set("toJSON", {
     delete ret._id;
     // we don't require information about the mongodb version.
     delete ret.__v;
-    return ret;
   },
 });
 module.exports = mongoose.model("Blog", blogSchema);

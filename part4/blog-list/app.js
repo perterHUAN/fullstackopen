@@ -1,4 +1,5 @@
 const express = require("express");
+require("express-async-errors");
 const logger = require("./utils/logger");
 const config = require("./utils/config");
 const cors = require("cors");
@@ -21,6 +22,7 @@ mongoose
 
 const app = express();
 app.use(cors());
+app.use(express.static("dist"));
 app.use(express.json());
 // place the middleware below
 // after expresson.jon() to ensure we obtain a valid blog.
@@ -28,7 +30,7 @@ app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
 
 app.use("/api/login", loginRouter);
-app.use("/api/blogs", middleware.userExtractor, blogRouter);
+app.use("/api/blogs", blogRouter);
 app.use("/api/users", userRouter);
 // don't match any path
 app.use(middleware.unknownEndpoint);
