@@ -135,4 +135,5 @@ module.exports = {
   getUserById,
   getTestUserId,
   getTestUserToken,
+  createTestUser,
 };
