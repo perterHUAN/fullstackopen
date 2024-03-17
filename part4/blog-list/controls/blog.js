@@ -17,14 +17,7 @@ blogRouter.post("/", async (request, response) => {
   const body = request.body;
   // console.log("post a blog: ", body);
 
-  // may throw error
-  const decodeToken = jwt.verify(request.token, process.env.SECRET);
-  if (!decodeToken.id) {
-    return response.status(401).json({ error: "token invalid" });
-  }
-  // console.log("decodeToken: ", decodeToken);
-
-  const user = await User.findById(decodeToken.id);
+  const user = request.user;
   // console.log("find user", user);
 
   const newBlog = new Blog({
@@ -50,17 +43,13 @@ blogRouter.get("/:id", async (request, response) => {
   }
 });
 blogRouter.delete("/:id", async (request, response) => {
-  const decodeToken = jwt.verify(request.token, process.env.SECRET);
-  if (!decodeToken.id) {
-    return response.status(401).json({ error: "token invalid" });
-  }
-
   // console.log("delete blog", decodeToken.id);
+  const user = request.user;
   const blogId = request.params.id;
-  const userId = decodeToken.id;
+  const userId = user.id;
   // if one people uses own token to delete other people's blog, what's happen?
   // const blog = await Blog.findByIdAndDelete(blogId);
-  const blog = await Blog.findById(request.params.id);
+  const blog = await Blog.findById(blogId);
 
   if (blog) {
     if (blog.user.toString() !== userId) {
@@ -70,7 +59,6 @@ blogRouter.delete("/:id", async (request, response) => {
     }
     await Blog.deleteOne({ _id: blog._id });
     console.log("delete");
-    const user = await User.findById(decodeToken.id);
     user.blogs = user.blogs.filter((blog) => blog.id !== blogId);
     await user.save();
     response.status(200).end();
