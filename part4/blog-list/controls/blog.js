@@ -58,14 +58,14 @@ blogRouter.delete(
     if (blog) {
       if (blog.user.toString() !== userId) {
         return response
-          .status(400)
+          .status(403)
           .send({ error: "This bog does not belong to you" });
       }
       await Blog.deleteOne({ _id: blog._id });
       console.log("delete");
       user.blogs = user.blogs.filter((blog) => blog.id !== blogId);
       await user.save();
-      response.status(200).end();
+      response.status(204).end();
     } else {
       response.status(404).end();
     }
