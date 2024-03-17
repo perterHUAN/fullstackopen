@@ -13,13 +13,23 @@ const App = () => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      blogService.setToken(user.token);
+    }
+  }, []);
+
   const handleLogin = async (event) => {
     event.preventDefault();
     // login in
     try {
       const user = await blogService.login({ username, password });
-      console.log("login in successful!", user);
+      window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
       setUser(user);
+      blogService.setToken(user.token);
       setUserName("");
       setPassword("");
     } catch (exception) {
@@ -33,7 +43,7 @@ const App = () => {
         <h2>log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
-            <label for="username">username:</label>
+            <label htmlFor="username">username:</label>
             <input
               id="username"
               name="username"
@@ -43,7 +53,7 @@ const App = () => {
             />
           </div>
           <div>
-            <label for="password">password:</label>
+            <label htmlFor="password">password:</label>
             <input
               id="password"
               name="password"
