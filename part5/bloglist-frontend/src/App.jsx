@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
-import BlogForm from "./components/BlogFrom";
+import BlogForm from "./components/BlogForm";
+import LoginForm from "./components/LoginForm";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
   // user info retrieved from server
   const [user, setUser] = useState(null);
-  const [blog, setBlog] = useState({ title: "", author: "", url: "" });
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -41,43 +39,19 @@ const App = () => {
       setTimeout(() => setMessage(""), 5000);
     }
   };
+  const login = async (loginInfo) => {
+    const user = await blogService.login(loginInfo);
+    window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
+    setUser(user);
+    blogService.setToken(user.token);
+  };
+
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogAppUser");
     blogService.setToken(null);
     setUser(null);
   };
-  const loginForm = () => {
-    return (
-      <>
-        <h2>log in to application</h2>
-        <form onSubmit={handleLogin}>
-          <div>
-            <label htmlFor="username">username:</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              value={username}
-              onChange={(event) => setUserName(event.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="password">password:</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </div>
-          <button>login</button>
-        </form>
-      </>
-    );
-  };
+
   const showBlogs = () => {
     return (
       <div>
@@ -99,7 +73,7 @@ const App = () => {
   return (
     <>
       {message !== "" && showMessage()}
-      {user === null && loginForm()}
+      {user === null && <LoginForm setMessage={setMessage} login={login} />}
       {user !== null && showBlogs()}
       {user !== null && (
         <BlogForm createBlog={createBlog} setMessage={setMessage} />
