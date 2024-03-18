@@ -57,7 +57,7 @@ blogRouter.delete(
     const blog = await Blog.findById(blogId);
 
     if (blog) {
-      if (blog.user.toString() !== userId) {
+      if (!blog.user || blog.user.toString() !== userId) {
         return response
           .status(403)
           .send({ error: "This bog does not belong to you" });
