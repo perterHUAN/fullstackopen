@@ -12,6 +12,17 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   console.log(blogs);
+  const removeBlog = async (blog) => {
+    try {
+      const data = await blogService.deleteBlog(blog);
+      setBlogs(blogs.filter((e) => e.id !== blog.id));
+      console.log("data: ", data);
+      console.log(`Delete ${blog.title} by ${blog.author}`);
+    } catch (expection) {
+      console.log("expection: ", expection);
+      setMessage(expection.response.data.error || "Delete Blog Fail");
+    }
+  };
   const addLikes = async (blog) => {
     try {
       // create new blog
@@ -26,6 +37,7 @@ const App = () => {
           .concat(savedBlog)
           .sort((a, b) => a.likes - b.likes)
       );
+      setMessage("Update Blog Successful");
     } catch (expection) {
       setMessage("Update Blog Fail");
     }
@@ -74,7 +86,9 @@ const App = () => {
       {isShowMessage && <Notification message={message} />}
       {isShowLogout && <Logout logout={logout} username={user.username} />}
       {isShowLoginForm && <LoginForm setMessage={setMessage} login={login} />}
-      {isShowBlogs && <Blogs blogs={blogs} addLikes={addLikes} />}
+      {isShowBlogs && (
+        <Blogs blogs={blogs} addLikes={addLikes} removeBlog={removeBlog} />
+      )}
       {isShowBlogForm && (
         <Togglable buttonLabel={"create a blog"}>
           <BlogForm createBlog={createBlog} setMessage={setMessage} />

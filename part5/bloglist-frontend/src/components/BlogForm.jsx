@@ -20,7 +20,7 @@ const BlogForm = ({ createBlog, setMessage }) => {
         title: "",
         url: "",
       });
-      setMessage(`a new blog ${title} by ${author} added`);
+      setMessage(`a new blog ${blog.title} by ${blog.author} added`);
       setTimeout(() => setMessage(""), 5000);
     } catch (expection) {
       setMessage("Create Blog Fail");
