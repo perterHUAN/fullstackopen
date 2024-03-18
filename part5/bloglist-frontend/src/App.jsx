@@ -12,7 +12,6 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   console.log(blogs);
-
   const addLikes = async (blog) => {
     try {
       // create new blog
@@ -22,14 +21,19 @@ const App = () => {
       const savedBlog = await blogService.update(newBlog);
       // change local blog
       setBlogs(
-        blogs.filter((blog) => blog.id !== savedBlog.id).concat(savedBlog)
+        blogs
+          .filter((blog) => blog.id !== savedBlog.id)
+          .concat(savedBlog)
+          .sort((a, b) => a.likes - b.likes)
       );
     } catch (expection) {
       setMessage("Update Blog Fail");
     }
   };
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService
+      .getAll()
+      .then((blogs) => setBlogs(blogs.sort((a, b) => a.likes - b.likes)));
   }, []);
 
   useEffect(() => {
