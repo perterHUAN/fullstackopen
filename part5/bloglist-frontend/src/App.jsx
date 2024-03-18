@@ -5,7 +5,7 @@ import LoginForm from "./components/LoginForm";
 import Blogs from "./components/Blogs";
 import Notification from "./components/Notification";
 import Togglable from "./components/Toggleable";
-
+import Logout from "./components/Logout";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   // user info retrieved from server
@@ -45,13 +45,16 @@ const App = () => {
 
   const isShowMessage = message !== "";
   const isShowLoginForm = user === null;
+  const isShowLogout = user !== null;
   const isShowBlogs = user !== null;
   const isShowBlogForm = user !== null;
+
   return (
     <>
       {isShowMessage && <Notification message={message} />}
+      {isShowLogout && <Logout logout={logout} username={user.username} />}
       {isShowLoginForm && <LoginForm setMessage={setMessage} login={login} />}
-      {isShowBlogs && <Blogs blogs={blogs} logout={logout} />}
+      {isShowBlogs && <Blogs blogs={blogs} />}
       {isShowBlogForm && (
         <Togglable buttonLabel={"create a blog"}>
           <BlogForm createBlog={createBlog} setMessage={setMessage} />
