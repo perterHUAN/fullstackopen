@@ -3,6 +3,7 @@ import blogService from "./services/blogs";
 import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
 import Blogs from "./components/Blogs";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -36,16 +37,13 @@ const App = () => {
     setUser(null);
   };
 
-  const showMessage = () => {
-    return <p className="message">{message}</p>;
-  };
   const createBlog = async (blog) => {
     const newBlog = await blogService.create(blog);
     setBlogs(blogs.concat(newBlog));
   };
   return (
     <>
-      {message !== "" && showMessage()}
+      {message !== "" && <Notification message={message} />}
       {user === null && <LoginForm setMessage={setMessage} login={login} />}
       {user !== null && <Blogs blogs={blogs} logout={logout} />}
       {user !== null && (

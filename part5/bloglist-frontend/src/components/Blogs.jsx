@@ -1,6 +1,5 @@
 import Blog from "./Blog";
 function Blogs({ blogs, logout }) {
-  console.log("blogs: ", blogs, "logout: ", logout);
   return (
     <div>
       <h2>blogs</h2>
