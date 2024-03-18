@@ -1,6 +1,7 @@
 const blogRouter = require("express").Router();
 const middleware = require("../utils/middleware");
 const Blog = require("../models/blog");
+const user = require("../models/user");
 // we don't need to write try-catch in middleware, it can help
 // us handle error.
 require("express-async-errors");
@@ -73,12 +74,19 @@ blogRouter.delete(
 );
 
 blogRouter.put("/:id", async (request, response) => {
-  const blog = await Blog.findByIdAndUpdate(request.params.id, request.body, {
+  const body = request.body;
+  const blog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+  };
+  const updateBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
     new: true,
     runValidators: true,
-  });
-  if (blog) {
-    response.send(blog);
+  }).populate("user", { username: 1, name: 1 });
+  if (updateBlog) {
+    response.send(updateBlog);
   } else {
     response.status(404).end();
   }
