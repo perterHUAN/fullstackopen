@@ -15,10 +15,10 @@ const login = async (credentials) => {
   return response.data;
 };
 
-const update = async (id, newBlog) => {
-  const response = await axios.put(`/api/blogs/${id}`, newBlog)
+const update = async (newBlog) => {
+  const response = await axios.put(`/api/blogs/${newBlog.id}`, newBlog);
   return response.data;
-}
+};
 const create = async (blog) => {
   const config = {
     headers: { Authorization: token },

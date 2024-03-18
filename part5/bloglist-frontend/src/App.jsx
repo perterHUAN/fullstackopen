@@ -16,17 +16,10 @@ const App = () => {
   const addLikes = async (blog) => {
     try {
       // create new blog
-      const blogId = blog.id;
-      const newBlog = { ...blog };
-      if (newBlog.hasOwnProperty("user")) {
-        newBlog.user = newBlog.user.id;
-      }
-      // update data should not include id property
-      delete newBlog.id;
-      newBlog.likes++;
+      const newBlog = { ...blog, likes: blog.likes + 1 };
       console.log("put to server: ", newBlog);
       // put to server
-      const savedBlog = await blogService.update(blogId, newBlog);
+      const savedBlog = await blogService.update(newBlog);
       // change local blog
       setBlogs(
         blogs.filter((blog) => blog.id !== savedBlog.id).concat(savedBlog)
