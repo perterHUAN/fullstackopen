@@ -11,7 +11,30 @@ const App = () => {
   // user info retrieved from server
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
+  console.log(blogs);
 
+  const addLikes = async (blog) => {
+    try {
+      // create new blog
+      const blogId = blog.id;
+      const newBlog = { ...blog };
+      if (newBlog.hasOwnProperty("user")) {
+        newBlog.user = newBlog.user.id;
+      }
+      // update data should not include id property
+      delete newBlog.id;
+      newBlog.likes++;
+      console.log("put to server: ", newBlog);
+      // put to server
+      const savedBlog = await blogService.update(blogId, newBlog);
+      // change local blog
+      setBlogs(
+        blogs.filter((blog) => blog.id !== savedBlog.id).concat(savedBlog)
+      );
+    } catch (expection) {
+      setMessage("Update Blog Fail");
+    }
+  };
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
@@ -54,7 +77,7 @@ const App = () => {
       {isShowMessage && <Notification message={message} />}
       {isShowLogout && <Logout logout={logout} username={user.username} />}
       {isShowLoginForm && <LoginForm setMessage={setMessage} login={login} />}
-      {isShowBlogs && <Blogs blogs={blogs} />}
+      {isShowBlogs && <Blogs blogs={blogs} addLikes={addLikes} />}
       {isShowBlogForm && (
         <Togglable buttonLabel={"create a blog"}>
           <BlogForm createBlog={createBlog} setMessage={setMessage} />

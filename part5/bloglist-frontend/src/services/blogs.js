@@ -15,6 +15,10 @@ const login = async (credentials) => {
   return response.data;
 };
 
+const update = async (id, newBlog) => {
+  const response = await axios.put(`/api/blogs/${id}`, newBlog)
+  return response.data;
+}
 const create = async (blog) => {
   const config = {
     headers: { Authorization: token },
@@ -22,4 +26,4 @@ const create = async (blog) => {
   const response = await axios.post("/api/blogs", blog, config);
   return response.data;
 };
-export default { getAll, login, setToken, create };
+export default { getAll, login, setToken, create, update };

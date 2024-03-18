@@ -1,5 +1,5 @@
 import { useState } from "react";
-const Blog = ({ blog }) => {
+const Blog = ({ blog, addLikes }) => {
   const [showDetail, setShowDetail] = useState(false);
   return (
     <div>
@@ -13,7 +13,10 @@ const Blog = ({ blog }) => {
         <>
           <p>{blog.author}</p>
           <p>{blog.url}</p>
-          <p>lieks: {blog.likes}</p>
+          <p>
+            lieks: {blog.likes}{" "}
+            <button onClick={() => addLikes(blog)}>likes</button>
+          </p>
         </>
       )}
     </div>
