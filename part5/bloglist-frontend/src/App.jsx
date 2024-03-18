@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
+import BlogForm from "./components/BlogFrom";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -77,71 +78,6 @@ const App = () => {
       </>
     );
   };
-  const handleSubmitBlog = async (event) => {
-    event.preventDefault();
-    try {
-      await blogService.create(blog);
-      setBlog({
-        title: "",
-        author: "",
-        url: "",
-      });
-      setMessage(`a new blog ${title} by ${author} added`);
-      setTimeout(() => setMessage(""), 5000);
-    } catch (exception) {
-      setMessage("Create Blog Fail");
-      setTimeout(() => setMessage(""), 5000);
-    }
-  };
-  const blogForm = () => {
-    return (
-      <>
-        <h2>Create New</h2>
-        <form onSubmit={handleSubmitBlog}>
-          <div>
-            <label htmlFor="title">title</label>
-            <input
-              id="title"
-              name="title"
-              type="text"
-              value={blog.title}
-              onChange={(event) =>
-                setBlog({ ...blog, title: event.target.value })
-              }
-              required
-            ></input>
-          </div>
-          <div>
-            <label htmlFor="author">author:</label>
-            <input
-              id="author"
-              name="author"
-              type="text"
-              value={blog.author}
-              onChange={(event) =>
-                setBlog({ ...blog, author: event.target.value })
-              }
-              required
-            ></input>
-          </div>
-          <div>
-            <label htmlFor="url">url:</label>
-            <input
-              id="url"
-              name="url"
-              type="text"
-              value={blog.url}
-              onChange={(event) =>
-                setBlog({ ...blog, url: event.target.value })
-              }
-              required
-            ></input>
-          </div>
-          <button>create</button>
-        </form>
-      </>
-    );
-  };
   const showBlogs = () => {
     return (
       <div>
@@ -156,13 +92,18 @@ const App = () => {
   const showMessage = () => {
     return <p className="message">{message}</p>;
   };
-
+  const createBlog = async (blog) => {
+    const newBlog = await blogService.create(blog);
+    setBlogs(blogs.concat(newBlog));
+  };
   return (
     <>
       {message !== "" && showMessage()}
       {user === null && loginForm()}
       {user !== null && showBlogs()}
-      {user !== null && blogForm()}
+      {user !== null && (
+        <BlogForm createBlog={createBlog} setMessage={setMessage} />
+      )}
     </>
   );
 };
