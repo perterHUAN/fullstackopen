@@ -8,6 +8,8 @@ const App = () => {
   const [password, setPassword] = useState("");
   // user info retrieved from server
   const [user, setUser] = useState(null);
+  const [blog, setBlog] = useState({ title: "", author: "", url: "" });
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -34,7 +36,8 @@ const App = () => {
       setPassword("");
     } catch (exception) {
       // error handle
-      console.log("login error");
+      setMessage("Login Fail");
+      setTimeout(() => setMessage(""), 5000);
     }
   };
   const handleLogout = () => {
@@ -55,6 +58,7 @@ const App = () => {
               type="text"
               value={username}
               onChange={(event) => setUserName(event.target.value)}
+              required
             />
           </div>
           <div>
@@ -65,9 +69,73 @@ const App = () => {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-            ></input>
+              required
+            />
           </div>
           <button>login</button>
+        </form>
+      </>
+    );
+  };
+  const handleSubmitBlog = async (event) => {
+    event.preventDefault();
+    try {
+      await blogService.create(blog);
+      setBlog({
+        title: "",
+        author: "",
+        url: "",
+      });
+    } catch (exception) {
+      setMessage("Create Blog Fail");
+      setTimeout(() => setMessage(""), 5000);
+    }
+  };
+  const blogForm = () => {
+    return (
+      <>
+        <h2>Create New</h2>
+        <form onSubmit={handleSubmitBlog}>
+          <div>
+            <label htmlFor="title">title</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              value={blog.title}
+              onChange={(event) =>
+                setBlog({ ...blog, title: event.target.value })
+              }
+              required
+            ></input>
+          </div>
+          <div>
+            <label htmlFor="author">author:</label>
+            <input
+              id="author"
+              name="author"
+              type="text"
+              value={blog.author}
+              onChange={(event) =>
+                setBlog({ ...blog, author: event.target.value })
+              }
+              required
+            ></input>
+          </div>
+          <div>
+            <label htmlFor="url">url:</label>
+            <input
+              id="url"
+              name="url"
+              type="text"
+              value={blog.url}
+              onChange={(event) =>
+                setBlog({ ...blog, url: event.target.value })
+              }
+              required
+            ></input>
+          </div>
+          <button>create</button>
         </form>
       </>
     );
@@ -83,10 +151,16 @@ const App = () => {
       </div>
     );
   };
+  const showMessage = () => {
+    return <p className="message">{message}</p>;
+  };
+
   return (
     <>
-      {!user && loginForm()}
-      {user && showBlogs()}
+      {message !== "" && showMessage()}
+      {user === null && loginForm()}
+      {user !== null && showBlogs()}
+      {user !== null && blogForm()}
     </>
   );
 };

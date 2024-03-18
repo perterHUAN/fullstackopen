@@ -14,4 +14,12 @@ const login = async (credentials) => {
   const response = await axios.post("/api/login", credentials);
   return response.data;
 };
-export default { getAll, login, setToken };
+
+const create = async (blog) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.post("/api/blogs", blog, config);
+  return response.data;
+};
+export default { getAll, login, setToken, create };
