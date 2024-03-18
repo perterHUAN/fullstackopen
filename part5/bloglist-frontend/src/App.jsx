@@ -17,7 +17,7 @@ const App = () => {
       const data = await blogService.deleteBlog(blog);
       setBlogs(blogs.filter((e) => e.id !== blog.id));
       console.log("data: ", data);
-      console.log(`Delete ${blog.title} by ${blog.author}`);
+      setMessage(`Delete ${blog.title} by ${blog.author}`);
     } catch (expection) {
       console.log("expection: ", expection);
       setMessage(expection.response.data.error || "Delete Blog Fail");
