@@ -1,5 +1,5 @@
 import Blog from "./Blog";
-function Blogs({ blogs, logout }) {
+function Blogs({ blogs}) {
   return (
     <div>
       <h2>blogs</h2>
