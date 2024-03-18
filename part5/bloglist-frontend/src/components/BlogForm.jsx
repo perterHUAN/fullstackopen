@@ -55,7 +55,7 @@ const BlogForm = ({ createBlog, setMessage }) => {
           <label htmlFor="url">url:</label>
           <input id="url" name="url" type="text" value={blog.url}></input>
         </div>
-        <button>create</button>
+        <button>submit</button>
       </form>
     </>
   );

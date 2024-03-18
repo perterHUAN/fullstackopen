@@ -4,6 +4,7 @@ import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
 import Blogs from "./components/Blogs";
 import Notification from "./components/Notification";
+import Togglable from "./components/Toggleable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -41,13 +42,20 @@ const App = () => {
     const newBlog = await blogService.create(blog);
     setBlogs(blogs.concat(newBlog));
   };
+
+  const isShowMessage = message !== "";
+  const isShowLoginForm = user === null;
+  const isShowBlogs = user !== null;
+  const isShowBlogForm = user !== null;
   return (
     <>
-      {message !== "" && <Notification message={message} />}
-      {user === null && <LoginForm setMessage={setMessage} login={login} />}
-      {user !== null && <Blogs blogs={blogs} logout={logout} />}
-      {user !== null && (
-        <BlogForm createBlog={createBlog} setMessage={setMessage} />
+      {isShowMessage && <Notification message={message} />}
+      {isShowLoginForm && <LoginForm setMessage={setMessage} login={login} />}
+      {isShowBlogs && <Blogs blogs={blogs} logout={logout} />}
+      {isShowBlogForm && (
+        <Togglable buttonLabel={"create a blog"}>
+          <BlogForm createBlog={createBlog} setMessage={setMessage} />
+        </Togglable>
       )}
     </>
   );
