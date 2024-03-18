@@ -36,7 +36,7 @@ const App = () => {
       setPassword("");
     } catch (exception) {
       // error handle
-      setMessage("Login Fail");
+      setMessage("wrong username or password");
       setTimeout(() => setMessage(""), 5000);
     }
   };
@@ -86,6 +86,8 @@ const App = () => {
         author: "",
         url: "",
       });
+      setMessage(`a new blog ${title} by ${author} added`);
+      setTimeout(() => setMessage(""), 5000);
     } catch (exception) {
       setMessage("Create Blog Fail");
       setTimeout(() => setMessage(""), 5000);
