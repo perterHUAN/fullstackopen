@@ -4,14 +4,13 @@ const Blog = ({ blog, addLikes, removeBlog }) => {
   return (
     <div>
       <h3>
-        {blog.title}{" "}
+        {blog.title} {blog.author}
         <button onClick={() => setShowDetail(!showDetail)}>
           {showDetail ? "hide" : "show"}
         </button>
       </h3>
       {showDetail && (
         <>
-          <p>{blog.author}</p>
           <p>{blog.url}</p>
           <p>
             lieks: {blog.likes}{" "}
