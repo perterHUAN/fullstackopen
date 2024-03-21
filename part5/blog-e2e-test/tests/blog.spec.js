@@ -1,4 +1,5 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
+const { create } = require("domain");
 
 describe("Blog List App", () => {
   beforeEach(async ({ page, request }) => {
@@ -47,6 +48,48 @@ describe("Blog List App", () => {
 
       const message = page.getByText("wrong username or password");
       expect(message).toBeDefined();
+    });
+
+    describe("when logged in", () => {
+      beforeEach(async ({ page }) => {
+        // login in
+        await loginWith(page, {
+          username: "peterhuan",
+          password: "123456",
+        });
+      });
+
+      test("a new blog should be created", async ({ page }) => {
+        const createBlogButton = page.getByRole("button", {
+          name: "create a blog",
+        });
+        await createBlogButton.click();
+
+        const title = page.getByRole("textbox", { name: "title" });
+        const author = page.getByRole("textbox", { name: "author" });
+        const url = page.getByRole("textbox", { name: "url" });
+        const submitButton = page.getByRole("button", { name: "submit" });
+
+        const blog = {
+          title: "Hello World",
+          author: "peterhuan",
+          url: "http://www.baidu.com",
+        };
+        await title.fill(blog.title);
+        await author.fill(blog.author);
+        await url.fill(blog.url);
+        await submitButton.click();
+
+        const message = page.getByText(
+          `a new blog ${blog.title} by ${author} added`
+        );
+        expect(message).toBeDefined();
+
+        const addBlog = page.getByText(`${blog.title} ${blog.author}`, {
+          exact: false,
+        });
+        await expect(addBlog).toBeVisible();
+      });
     });
   });
 });
