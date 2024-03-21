@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {"test":"playwright test", "test:report":"playwright show-report"},
+  "scripts": {
+    "test": "playwright test tests/blog.spec.js  --project chromium",
+    "test:report": "playwright show-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
