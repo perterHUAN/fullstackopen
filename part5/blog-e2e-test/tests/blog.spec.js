@@ -115,7 +115,7 @@ describe("Blog List App", () => {
           // create blogs
           await createBlogs(page, blogs);
         });
-        test.only("a created blog can can receive likes", async ({ page }) => {
+        test("a created blog can can receive likes", async ({ page }) => {
           // click show button
           const showButton = page.getByRole("button", { name: "show" }).first();
           await expect(showButton).toBeVisible();
@@ -157,7 +157,26 @@ describe("Blog List App", () => {
           await expect(message).toBeVisible();
           await expect(blog).not.toBeVisible();
         });
-        test("only the user who added the blog can delete the blog", () => {});
+        test("only the user who added the blog can sees the blog's delete button", async ({
+          page,
+        }) => {
+          // current login can see delete button
+          const blog = page
+            .getByText(`${blogs[0].title}`, { exact: false })
+            .locator("..");
+          // click show button
+          const showButton = blog.getByRole("button", { name: "show" }).first();
+          await expect(showButton).toBeVisible();
+          await showButton.click();
+
+          const removeButton = blog.getByRole("button", { name: "remove" });
+          await expect(removeButton).toBeVisible();
+
+          // logout
+          const logoutButton = page.getByRole("button", { name: "logout" });
+          await logoutButton.click();
+          await expect(logoutButton).not.toBeVisible();
+        });
         test("the blogs are arranged in the order according to the likes, the blog with the most likes first", () => {});
       });
     });
