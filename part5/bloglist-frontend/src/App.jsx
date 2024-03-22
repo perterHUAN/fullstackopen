@@ -22,6 +22,7 @@ const App = () => {
       console.log("expection: ", expection);
       setMessage(expection.response.data.error || "Delete Blog Fail");
     }
+    setTimeout(() => setMessage(""), 3000);
   };
   const addLikes = async (blog) => {
     try {
@@ -41,6 +42,7 @@ const App = () => {
     } catch (expection) {
       setMessage("Update Blog Fail");
     }
+    setTimeout(() => setMessage(""), 3000);
   };
   useEffect(() => {
     blogService

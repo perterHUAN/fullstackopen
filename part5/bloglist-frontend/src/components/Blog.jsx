@@ -13,7 +13,7 @@ const Blog = ({ blog, addLikes, removeBlog }) => {
         <>
           <p>{blog.url}</p>
           <p>
-            lieks: {blog.likes}{" "}
+            likes: {blog.likes}{" "}
             <button onClick={() => addLikes(blog)}>likes</button>
           </p>
           <button onClick={() => removeBlog(blog)}>remove</button>

@@ -21,11 +21,10 @@ const BlogForm = ({ createBlog, setMessage }) => {
         url: "",
       });
       setMessage(`a new blog ${blog.title} by ${blog.author} added`);
-      setTimeout(() => setMessage(""), 5000);
     } catch (expection) {
       setMessage("Create Blog Fail");
-      setTimeout(() => setMessage(""), 5000);
     }
+    setTimeout(() => setMessage(""), 3000);
   };
   return (
     <>
