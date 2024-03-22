@@ -36,7 +36,7 @@ const App = () => {
         blogs
           .filter((blog) => blog.id !== savedBlog.id)
           .concat(savedBlog)
-          .sort((a, b) => a.likes - b.likes)
+          .sort((a, b) => b.likes - a.likes)
       );
       setMessage("Update Blog Successful");
     } catch (expection) {
@@ -47,7 +47,7 @@ const App = () => {
   useEffect(() => {
     blogService
       .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => a.likes - b.likes)));
+      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
   }, []);
 
   useEffect(() => {

@@ -83,7 +83,7 @@ describe("Blog List App", () => {
         await submitButton.click();
 
         const message = page.getByText(
-          `a new blog ${blog.title} by ${author} added`
+          `a new blog ${blog.title} by ${blog.author} added`
         );
         await expect(message).toBeVisible();
 
@@ -117,12 +117,13 @@ describe("Blog List App", () => {
         });
         test("a created blog can can receive likes", async ({ page }) => {
           // click show button
-          const showButton = page.getByRole("button", { name: "show" }).first();
-          await expect(showButton).toBeVisible();
-          await showButton.click();
+          const blog = page
+            .getByText(`${blogs[0].title}`, { expect: false })
+            .locator("..");
+          await showBlog(blog);
           // find likes
-          const likesButton = page.getByText("likes").first();
-          const likes = page.getByText("likes: 0", { exact: false }).first();
+          const likesButton = blog.getByText("likes");
+          const likes = blog.getByText("likes: 0", { exact: false });
 
           await expect(likesButton).toBeVisible();
           await expect(likes).toBeVisible();
@@ -165,9 +166,7 @@ describe("Blog List App", () => {
             .getByText(`${blogs[0].title}`, { exact: false })
             .locator("..");
           // click show button
-          const showButton = blog.getByRole("button", { name: "show" }).first();
-          await expect(showButton).toBeVisible();
-          await showButton.click();
+          await showBlog(blog);
 
           const removeButton = blog.getByRole("button", { name: "remove" });
           await expect(removeButton).toBeVisible();
@@ -177,11 +176,33 @@ describe("Blog List App", () => {
           await logoutButton.click();
           await expect(logoutButton).not.toBeVisible();
         });
-        test("the blogs are arranged in the order according to the likes, the blog with the most likes first", () => {});
+        test("the blogs are arranged in the order according to the likes, the blog with the most likes first", async ({
+          page,
+        }) => {
+          const likes = [2, 3, 1];
+          for (let i = 0; i < 3; ++i) {
+            const blog = page
+              .getByText(`${blogs[i].title}`, { exact: false })
+              .locator("..");
+            await showBlog(blog);
+            const cnt = likes[i];
+            for (let j = 0; j < cnt; ++j) {
+              await clickLikes(blog);
+            }
+          }
+
+          const likesInfo = page.getByText(/likes: \d/);
+          await expect(likesInfo).toContainText([/3/, /2/, /1/]);
+        });
       });
     });
   });
 });
+async function showBlog(blog) {
+  const showButton = blog.getByRole("button", { name: "show" });
+  await expect(showButton).toBeVisible();
+  await showButton.click();
+}
 
 async function loginWith(page, credentials) {
   const password = page.getByRole("textbox", { name: "password" });
@@ -215,4 +236,12 @@ async function createBlogs(page, blogs) {
       .getByText(`a new blog ${blog.title} by ${blog.author} added`)
       .waitFor();
   }
+}
+async function clickLikes(blog) {
+  const likesButton = blog.getByRole("button", { name: "likes" });
+  const likes = blog.getByText("likes: ", { expect: false });
+  const beforeClickInfo = await likes.innerText();
+  const afterClickInfo = beforeClickInfo.replace(/\d+/, (e) => Number(e) + 1);
+  await likesButton.click();
+  await expect(likes).toHaveText(afterClickInfo);
 }
