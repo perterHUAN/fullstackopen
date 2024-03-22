@@ -94,25 +94,25 @@ describe("Blog List App", () => {
       });
 
       describe("when create blogs", () => {
+        const blogs = [
+          {
+            title: "Hello world",
+            author: "peterhuan",
+            url: "http://www.baidu.com",
+          },
+          {
+            title: "A good day",
+            author: "peterhuan",
+            url: "https://www.baidu.com",
+          },
+          {
+            title: "HTML and CSS",
+            author: "peterhuan",
+            url: "https://www.baidu.com",
+          },
+        ];
         beforeEach(async ({ page }) => {
           // create blogs
-          const blogs = [
-            {
-              title: "Hello world",
-              author: "peterhuan",
-              url: "http://www.baidu.com",
-            },
-            {
-              title: "A good day",
-              author: "peterhuan",
-              url: "https://www.baidu.com",
-            },
-            {
-              title: "HTML and CSS",
-              author: "peterhuan",
-              url: "https://www.baidu.com",
-            },
-          ];
           await createBlogs(page, blogs);
         });
         test.only("a created blog can can receive likes", async ({ page }) => {
@@ -135,7 +135,28 @@ describe("Blog List App", () => {
           const newLikes = page.getByText("likes: 1", { exact: false }).first();
           await expect(newLikes).toBeVisible();
         });
-        test("a created blog can be delete", async () => {});
+        test("a created blog can be delete", async ({ page }) => {
+          const blog = page
+            .getByText(`${blogs[0].title}`, { exact: false })
+            .locator("..");
+          // click show button
+          const showButton = blog.getByRole("button", { name: "show" }).first();
+          await expect(showButton).toBeVisible();
+          await showButton.click();
+
+          // remove button, blog to be removed
+          const removeButton = blog.getByRole("button", { name: "remove" });
+          // before click
+          await expect(blog).toBeVisible();
+          // click
+          await removeButton.click();
+          // after click
+          const message = page.getByText(`Delete ${blogs[0].title}`, {
+            exact: false,
+          });
+          await expect(message).toBeVisible();
+          await expect(blog).not.toBeVisible();
+        });
         test("only the user who added the blog can delete the blog", () => {});
         test("the blogs are arranged in the order according to the likes, the blog with the most likes first", () => {});
       });
