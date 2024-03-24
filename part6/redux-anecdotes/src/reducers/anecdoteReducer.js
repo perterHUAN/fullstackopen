@@ -17,6 +17,25 @@ const asObject = (anecdote) => {
   };
 };
 
+export const createAnecdote = (anecdote) => {
+  return {
+    type: "ADD",
+    payload: {
+      anecdote,
+    },
+  };
+};
+
+export const vote = (id) => {
+  console.log("vote", id);
+  return {
+    type: "VOTE",
+    payload: {
+      id,
+    },
+  };
+};
+
 const initialState = anecdotesAtStart.map(asObject);
 
 const reducer = (state = initialState, action) => {
@@ -31,7 +50,7 @@ const reducer = (state = initialState, action) => {
         .sort((a, b) => b.votes - a.votes);
     case "ADD":
       return state
-        .concat(asObject(action.data.anecdote))
+        .concat(asObject(action.payload.anecdote))
         .sort((a, b) => b.votes - a.votes);
   }
   return state.slice().sort((a, b) => b.votes - a.votes);
