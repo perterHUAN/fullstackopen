@@ -24,14 +24,17 @@ const reducer = (state = initialState, action) => {
   console.log("action", action);
   switch (action.type) {
     case "VOTE":
-      return state.map((e) =>
-        e.id === action.payload.id ? { ...e, votes: e.votes + 1 } : e
-      );
+      return state
+        .map((e) =>
+          e.id === action.payload.id ? { ...e, votes: e.votes + 1 } : e
+        )
+        .sort((a, b) => b.votes - a.votes);
     case "ADD":
-      return state.concat(asObject(action.data.anecdote));
+      return state
+        .concat(asObject(action.data.anecdote))
+        .sort((a, b) => b.votes - a.votes);
   }
-
-  return state;
+  return state.slice().sort((a, b) => b.votes - a.votes);
 };
 
 export default reducer;
