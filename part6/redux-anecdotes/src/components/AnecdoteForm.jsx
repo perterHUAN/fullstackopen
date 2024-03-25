@@ -4,17 +4,14 @@ import {
   clearNotification,
 } from "../reducers/notificationReducer";
 import { useDispatch } from "react-redux";
-import anecdoteService from "../services/anecdotes";
 function AnecdoteForm() {
   const dispatch = useDispatch();
   const addAnecdote = async (event) => {
     event.preventDefault();
     const anecdote = event.target.anecdote.value;
     event.target.anecdote.value = "";
-    // post to backend
-    // receive response, and set local state, push the new anecdote to local state
-    const newAnecdote = await anecdoteService.createAnecdote(anecdote);
-    dispatch(createAnecdote(newAnecdote));
+    dispatch(createAnecdote(anecdote));
+
     dispatch(setNotification(`you creates a new anecdote '${anecdote}'`));
     setTimeout(() => dispatch(clearNotification()), 5000);
   };

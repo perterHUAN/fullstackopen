@@ -9,7 +9,7 @@ const App = () => {
   const dispatch = useDispatch();
   useEffect(async () => {
     // relay on redux thrunk, pass a function to dispatch, not a action
-    dispatch(initialAnecdotes);
+    dispatch(initialAnecdotes());
   }, []);
   return (
     <div>

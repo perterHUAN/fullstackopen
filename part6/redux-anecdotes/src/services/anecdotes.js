@@ -15,4 +15,12 @@ const createAnecdote = async (anecdote) => {
   return response.data;
 };
 
-export default { getAll, createAnecdote };
+const addVotes = async (anecdote) => {
+  const response = await axios.put(`${baseUrl}/${anecdote.id}`, {
+    ...anecdote,
+    votes: anecdote.votes + 1
+  });
+  // must not only post votes filed, otherwise other fileds will be deleted.
+  return response.data;
+};
+export default { getAll, createAnecdote, addVotes };
