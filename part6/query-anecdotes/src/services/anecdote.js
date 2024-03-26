@@ -5,4 +5,13 @@ const getAll = () => {
   return axios.get(baseUrl).then((response) => response.data);
 };
 
-export default { getAll };
+const createAnecdote = (content) => {
+  return axios
+    .post(baseUrl, {
+      content,
+      votes: 0,
+    })
+    .then((response) => response.data);
+};
+
+export default { getAll, createAnecdote };
