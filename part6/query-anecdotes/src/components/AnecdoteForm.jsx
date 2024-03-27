@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import anecdoteServices from "../services/anecdote";
 import { useMessageDispatch } from "./NotificationContext";
+import showMessage from "../utils/showMessage";
 const AnecdoteForm = () => {
   const messageDispatch = useMessageDispatch();
   const queryClient = useQueryClient();
@@ -9,11 +10,16 @@ const AnecdoteForm = () => {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData("anecdotes");
       queryClient.setQueryData("anecdotes", anecdotes.concat(newAnecdote));
-      messageDispatch({
-        type: "show",
-        payload: `create a new anecdote '${newAnecdote.content}'`,
-      });
-      setTimeout(() => messageDispatch({ type: "hide" }), 5000);
+      showMessage(
+        messageDispatch,
+        `create a new anecdote '${newAnecdote.content}'`
+      );
+    },
+    onError: () => {
+      showMessage(
+        messageDispatch,
+        "too short anecdote, must have length 5 or more"
+      );
     },
   });
   const onCreate = (event) => {
