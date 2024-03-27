@@ -3,12 +3,12 @@
     {
       "content": "If it hurts, do it more often",
       "id": "47145",
-      "votes": 0
+      "votes": 11
     },
     {
       "content": "Adding manpower to a late software project makes it later!",
       "id": "21149",
-      "votes": 0
+      "votes": 3
     },
     {
       "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
@@ -23,7 +23,7 @@
     {
       "content": "Premature optimization is the root of all evil.",
       "id": "25170",
-      "votes": 0
+      "votes": 1
     },
     {
       "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
@@ -37,8 +37,43 @@
     },
     {
       "content": "A good day, a good day",
-      "votes": 0,
+      "votes": 1,
       "id": "N6zdq1u"
+    },
+    {
+      "content": "good good study, good good up",
+      "votes": 0,
+      "id": "8MAuqiF"
+    },
+    {
+      "content": "Hello world, what's your anme",
+      "votes": 2,
+      "id": "Y2-IG2K"
+    },
+    {
+      "content": "Add a new anecdote",
+      "votes": 5,
+      "id": "LKfgiId"
+    },
+    {
+      "content": "good good study, good good up",
+      "votes": 3,
+      "id": "wKTU0W3"
+    },
+    {
+      "content": "This is a new queryKey",
+      "votes": 3,
+      "id": "Pdwbb70"
+    },
+    {
+      "content": "Test Anecdote, what's your name?",
+      "votes": 5,
+      "id": "9ZgXhbr"
+    },
+    {
+      "content": "Test Anecdote, another test",
+      "votes": 2,
+      "id": "NP0x6jc"
     }
   ]
 }

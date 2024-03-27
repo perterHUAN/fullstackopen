@@ -14,4 +14,13 @@ const createAnecdote = (content) => {
     .then((response) => response.data);
 };
 
-export default { getAll, createAnecdote };
+const vote = (anecdote) => {
+  return axios
+    .put(`${baseUrl}/${anecdote.id}`, {
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    })
+    .then((response) => response.data);
+};
+
+export default { getAll, createAnecdote, vote };
