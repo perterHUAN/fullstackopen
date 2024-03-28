@@ -5,6 +5,7 @@ import {
   Route,
   Link,
   useMatch,
+  useNavigate,
 } from "react-router-dom";
 
 const Menu = () => {
@@ -77,6 +78,8 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState("");
   const [info, setInfo] = useState("");
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
@@ -85,6 +88,8 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     });
+    props.setNotification(`a new anecdote ${content} created!`);
+    navigate("/");
   };
 
   return (
@@ -183,10 +188,16 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      {notification && <p>{notification}</p>}
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/about" element={<About />} />
-        <Route path="/create" element={<CreateNew addNew={addNew} />} />
+        <Route
+          path="/create"
+          element={
+            <CreateNew addNew={addNew} setNotification={setNotification} />
+          }
+        />
         <Route
           path="/anecdotes/:id"
           element={<Anecdote anecdote={anecdote} />}
